@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .one {
+            width: 100vw;
+            height: 2rem;
+            background-color: rgb(225,225,225);
+        }        
+        .one:nth-child(2) {
+            width: 100vw;
+            height: 2rem;
+            background-color: rgb(98, 98, 98);
+        }
+        .one:nth-last-child(5) {
+            width: 100vw;
+            height: 2rem;
+            background-color: rgb(98, 98, 98);
+        }
+        li:first-child>a:first-child{
+            color:red;
+        }
+        a:last-child:hover{
+            color: green;
+        }
+
+        .centi::after {
+            content:"cm";
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <div class="one"></div>
+    <div class="one"></div>
+    <div class="one"></div>
+    <div class="one"></div>
+    <div class="one"></div>
+    <div class="one"></div>
+    <div class="one"></div>
+
+    <ul>
+        <li><a href="#">주의 사항</a></li>
+        <li><a href="#">주의 사항</a></li>
+        <li><a href="#">주의 사항</a></li>
+        <li><a href="#">주의 사항</a></li>
+        <li><a href="#">주의 사항</a></li>
+    </ul>
+
+    <div class="centi">11</div>
+    <div class="centi">12</div>
+    <div class="centi">13</div>
+    <div class="centi">14</div>
+    <div class="centi">15</div>
+    <div class="centi">16</div>
+    <div class="centi">17</div>
+    <div class="centi">18</div>
+    <div class="centi">19</div>
+    <div class="centi">110</div>
+</body>
+</html>

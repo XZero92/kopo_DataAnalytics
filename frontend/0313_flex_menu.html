@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="reset.css" />
+    <style>
+      .container {
+        width: 1280px;
+        height: 80px;
+        background-color: rgb(225, 240, 235);
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        /* gap: 2px; */
+        /* flex-wrap: wrap; */
+      }
+      .item1 {
+        width: 200px;
+        height: 70px;
+        background-color: #0273eb;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        color: white;
+      }
+      .item2 {
+        width: 500px;
+        height: 70px;
+        background-color: rgb(184, 161, 240);
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 5px;
+        border-radius: 10px;
+      }
+      .sub-item {
+        width: 100px;
+        height: 68px;
+        background-color: rgb(27, 32, 28);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="item1">데분</div>
+      <div class="item2">
+        <div class="sub-item">Home</div>
+        <div class="sub-item">Product</div>
+        <div class="sub-item">Q&A</div>
+        <div class="sub-item">contact</div>
+      </div>
+    </div>
+  </body>
+</html>

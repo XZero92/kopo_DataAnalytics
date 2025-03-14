@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .container {
+            width: 500px;
+            height: 500px;
+            background-color: lightgray;
+            display:flex;
+            justify-content: space-evenly;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            flex-direction: column;
+        }
+        .box {
+            width:100px;
+            height:100px;
+            background-color: lightgreen;
+            border: 1px solid
+        }
+        .wrap {
+            background-color: rgb(203, 227, 235);
+            width: 700px;
+            height: 500px;
+            display:flex;
+            justify-content: space-between;
+        }
+        .wrap>div {
+            display:flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .wrap>.right-side {
+            flex-direction: column-reverse;
+        }
+        .wrap>div>div {
+            color: white;
+            line-height: 100px;
+            text-align: center;
+            font-size: 40px;
+            width: 100px;
+            height: 100px;
+        }
+        .blue {
+            background-color: #4967d8;
+        }
+        .pink {
+            background-color: #ea8676;
+        }
+        .yellow {
+            background-color: #fad84a;
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <div class="container"> 
+        <div class="box">A</div>
+        <div class="box">B</div>
+        <div class="box">C</div>
+    </div>
+
+    <div class="wrap">
+        <div class="left-side">
+            <div class="blue">A</div>
+            <div class="pink">B</div>
+            <div class="yellow">C</div>
+        </div>
+        <div class="center">
+            <div class="blue">D</div>
+            <div class="yellow">E</div>
+        </div>
+        <div class="right-side">
+            <div class="blue">F</div>
+            <div class="pink">G</div>
+            <div class="yellow">H</div>
+        </div>
+    </div>
+</body>
+</html>

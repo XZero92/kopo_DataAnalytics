@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS3 Selector Basic</title>
+    <style>
+        #header h1 {
+        color: red;
+        }
+        #section h1 {
+        color: orange;
+        }
+        #section > p {
+        font-weight: bold;
+        }
+        #section ~ p {
+        font-style: italic;
+        }
+        #section + p {
+        color: purple;
+        font-size:x-large;
+        
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1 class="title">Lorem ipsum</h1>
+        <div id="nav">
+            <h1>Navigation</h1>
+        </div>
+    </div>
+    <div id="section">
+        <h1 class="title">Lorem ipsum</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    </div>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing.</p>
+</body>
+</html>
