@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타자 연습</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #text-container {
+            font-size: 24px;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            text-align: left;
+            display: inline-block;
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .incorrect {
+            background-color: red;
+            color: white;
+        }
+        #input-box {
+            width: 80%;
+            font-size: 20px;
+            padding: 10px;
+            display: block;
+            margin: 10px auto;
+        }
+        #stats {
+            margin-top: 10px;
+        }
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(14, 1fr);
+            gap: 5px;
+            max-width: 700px;
+            margin: 20px auto;
+        }
+        .key {
+            padding: 10px;
+            background: #ddd;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 18px;
+            user-select: none;
+        }
+        .active {
+            background: #ffcc00;
+        }
+    </style>
+</head>
+<body>
+    <h1>타자 연습</h1>
+    <div id="text-container"></div>
+    <input type="text" id="input-box" placeholder="입력하세요...">
+    <div id="stats">속도: <span id="wpm">0</span> WPM</div>
+    <div class="keyboard" id="keyboard"></div>
+    
+    <script>
+        const codeSamples = [
+            "<div class=\"container\">\n    <h1>Hello, World!</h1>\n</div>",
+            "<button onclick=\"alert('Click!')\">Click Me</button>",
+            "<input type=\"text\" placeholder=\"Type here...\">"
+        ];
+        
+        let currentCodeLines = [];
+        let currentLineIndex = 0;
+        let startTime = null;
+        
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;")
+                       .replace(/</g, "&lt;")
+                       .replace(/>/g, "&gt;")
+                       .replace(/\"/g, "&quot;")
+                       .replace(/'/g, "&#39;");
+        }
+        
+        function newCode() {
+            const fullCode = codeSamples[Math.floor(Math.random() * codeSamples.length)];
+            currentCodeLines = fullCode.split("\n");
+            currentLineIndex = 0;
+            updateText();
+            document.getElementById("input-box").value = "";
+            startTime = null;
+        }
+        
+        function updateText(inputText = "") {
+            let currentLine = currentCodeLines[currentLineIndex] || "";
+            let highlightedText = "";
+            
+            for (let i = 0; i < currentLine.length; i++) {
+                if (i < inputText.length && inputText[i] !== currentLine[i]) {
+                    highlightedText += `<span class='incorrect'>${escapeHtml(currentLine[i])}</span>`;
+                } else {
+                    highlightedText += escapeHtml(currentLine[i]);
+                }
+            }
+            
+            document.getElementById("text-container").innerHTML = `${highlightedText}<br>${escapeHtml(currentCodeLines[currentLineIndex + 1] || "")}`;
+        }
+        
+        document.getElementById("input-box").addEventListener("input", function(event) {
+            if (!startTime) startTime = new Date();
+            const inputText = this.value;
+            updateText(inputText);
+        });
+        
+        document.addEventListener("keydown", function(event) {
+            highlightKey(event.key);
+        });
+
+        document.addEventListener("keyup", function(event) {
+            unhighlightKey(event.key);
+        });
+        
+        function generateKeyboard() {
+            const keys = [
+                "`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace",
+                "Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\\",
+                "CapsLock", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "Enter",
+                "Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Shift"
+            ];
+            
+            const keyboard = document.getElementById("keyboard");
+            keyboard.innerHTML = "";
+            keys.splice(keys.lastIndexOf("Shift"), 1);
+            keys.splice(keys.indexOf("Z"), 0, "Shift");
+            
+            keys.forEach(key => {
+                let keyElement = document.createElement("div");
+                keyElement.classList.add("key");
+                keyElement.textContent = key;
+                keyElement.dataset.key = key;
+                keyboard.appendChild(keyElement);
+            });
+        }
+        
+        function highlightKey(key) {
+            const keyElement = [...document.querySelectorAll(".key")].find(el => el.textContent === key);
+            if (keyElement) {
+                keyElement.classList.add("active");
+            }
+        }
+        
+        function unhighlightKey(key) {
+            const keyElement = [...document.querySelectorAll(".key")].find(el => el.textContent === key);
+            if (keyElement) {
+                keyElement.classList.remove("active");
+            }
+        }
+        
+        generateKeyboard();
+        newCode();
+    </script>
+</body>
+</html>
