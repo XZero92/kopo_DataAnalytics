@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타자 연습</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
+    <style>
+        body { font-family: monospace; text-align: center; }
+        #text-display {
+            white-space: pre-wrap;
+            font-size: 18px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: lightgray;
+            width: 600px;
+            text-align: left;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 100px;
+        }
+        .correct { background-color: lightgreen; }
+        .incorrect { background-color: lightcoral; }
+        .keyboard-container { max-width: 600px; margin: auto; }
+        .highlight-key { background-color: blue !important; color: white !important; }
+        .pressed-key { background-color: darkgray !important; }
+        .current-line { font-weight: bold; }
+        .pending-line { color: gray; }
+    </style>
+</head>
+<body>
+    <h1>타자 연습</h1>
+    <pre id="text-display"></pre>
+    <div class="keyboard-container">
+        <div class="simple-keyboard"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.js"></script>
+    <script>
+        const textLines = [
+            "#include \"iostream.h\"",
+            "using namespace std;",
+            "int main() {",
+            "cout << \"Hello, World!\" << endl;",
+            "return 0;",
+            "}",
+            "// This is a sample C++ program",
+            "// It prints 'Hello, World!' to the console",
+            "int add(int a, int b) {",
+            "return a + b;",
+            "}",
+            "void greet() {",
+            "cout << \"Greetings!\" << endl;",
+            "}"
+        ];
+        
+        let currentLineIndex = 0;
+        let currentInput = "";
+        const textDisplay = document.getElementById("text-display");
+        const keyboard = new SimpleKeyboard.default({
+            onChange: input => handleInput(input),
+            onKeyPress: button => handleKeyPress(button),
+            physicalKeyboardHighlight: true
+        });
+        
+        function updateDisplay() {
+            let displayText = "";
+            for (let i = Math.max(0, currentLineIndex - 3); i <= currentLineIndex + 1 && i < textLines.length; i++) {
+                let lineClass = i === currentLineIndex ? "current-line" : "pending-line";
+                let coloredText = textLines[i].split('').map((char, j) => {
+                    if (i === currentLineIndex) {
+                        if (j < currentInput.length) {
+                            return `<span class="${char === currentInput[j] ? 'correct' : 'incorrect'}">${currentInput[j]}</span>`;
+                        }
+                    }
+                    return char;
+                }).join('');
+                displayText += `<span class="${lineClass}">${coloredText}</span>\n`;
+            }
+            textDisplay.innerHTML = displayText;
+            textDisplay.scrollTop = textDisplay.scrollHeight;
+            highlightNextKey();
+        }
+        
+        function handleInput(input) {
+            currentInput = input;
+            if (currentInput.length >= textLines[currentLineIndex].length) {
+                currentLineIndex++;
+                currentInput = "";
+            }
+            updateDisplay();
+            keyboard.setInput(currentInput);
+        }
+        
+        function highlightNextKey() {
+            let nextChar = textLines[currentLineIndex][currentInput.length] || "";
+            document.querySelectorAll(".hg-button").forEach(key => key.classList.remove("highlight-key"));
+            if (nextChar) {
+                let keyElement = document.querySelector(`.hg-button[button='${nextChar}']`);
+                if (keyElement) keyElement.classList.add("highlight-key");
+            }
+        }
+        
+        function handleKeyPress(button) {
+            let keyElement = document.querySelector(`.hg-button[button='${button}']`);
+            if (keyElement) {
+                keyElement.classList.add("pressed-key");
+                setTimeout(() => keyElement.classList.remove("pressed-key"), 200);
+            }
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key.length === 1 || event.key === "Backspace") {
+                handleInput(event.key === "Backspace" ? currentInput.slice(0, -1) : currentInput + event.key);
+            }
+            let keyElement = document.querySelector(`.hg-button[button='${event.key}']`);
+            if (keyElement) {
+                keyElement.classList.add("pressed-key");
+            }
+        });
+
+        document.addEventListener("keyup", (event) => {
+            let keyElement = document.querySelector(`.hg-button[button='${event.key}']`);
+            if (keyElement) {
+                keyElement.classList.remove("pressed-key");
+            }
+        });
+        
+        updateDisplay();
+    </script>
+</body>
+</html>
