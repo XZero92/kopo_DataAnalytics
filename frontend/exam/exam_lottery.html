@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로또 번호 생성기</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-around;
+        }
+        .form-container, .result-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .result-container {
+            width: 60%;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h3>로또 번호 생성기</h3>
+            <h6>게임 로또를 예측하겠습니까?</h6>
+            <input type="number" id="repeatCount" min="1" max="5" value="1">
+            <button id="generateButton">추첨</button>
+        </div>
+        <div class="result-container">
+            <h3>추첨 결과</h3>
+            <div id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        function generateLottoNumbers() {
+            const numbers = [];
+            while (numbers.length < 6) {
+                const num = Math.floor(Math.random() * 45) + 1;
+
+                for(var i=0; i < numbers.length; i++) {
+                    if(num === numbers[i]) {
+                        break;
+                    }
+                }
+                numbers.push(num);
+            }
+            return numbers.sort((a, b) => a - b);
+        }
+
+        const button = document.getElementById('generateButton')
+
+        button.addEventListener('click', () => {
+            const repeatCount = parseInt(document.getElementById('repeatCount').value, 10);
+            const resultsContainer = document.getElementById('results');
+
+            if (isNaN(repeatCount) || repeatCount < 1 || repeatCount > 5) {
+                alert('반복 횟수는 1 이상 5 이하만 가능합니다.');
+                return;
+            }
+
+            resultsContainer.innerHTML = '';
+
+            for (let i = 1; i <= repeatCount; i++) {
+                const lottoNumbers = generateLottoNumbers();
+                const resultText = `${i}회차 : ${lottoNumbers.join(', ')}`;
+                const resultElement = document.createElement('div');
+                resultElement.textContent = resultText;
+                resultsContainer.appendChild(resultElement);
+            }
+        });
+    </script>
+</body>
+</html>
