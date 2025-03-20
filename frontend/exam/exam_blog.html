@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script type="text/javascript" src="/___vscode_livepreview_injected_script"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+
+    <style>
+        .black-han-sans-regular {
+        font-family: "Black Han Sans", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        }
+
+
+        * {
+            font-family: "Black Han Sans";
+            
+            padding: 0px;
+        }
+        header, footer {
+            height: 15vh;
+            display: flex;
+            justify-content: center;
+            border: 1px solid rgb(158, 158, 158);
+        }
+        .logo {
+            width: 30%;
+        }
+        section .indexPage {
+            display: flex;
+            height: 70vh;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+        nav{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-direction: row;
+        }
+        header ul, footer ul{
+            width: 40vw;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-direction: row;            
+            list-style: none;
+        }
+        li {
+            min-width: fit-content;
+        }
+        
+        a {
+            text-align: center;
+            vertical-align: middle;
+        }
+        a:link {
+            color: black;
+            text-decoration: none;
+        }
+        a:visited {
+            color: black;
+            text-decoration: none;
+        }
+        .navMenu li{
+            position: relative;
+            width: 5rem;
+            height: 2rem;
+            text-align: center;
+
+            font-size: 1.2em;
+        }
+        .navMenu>li#menu_blog {
+            background-color: orange;
+        }
+
+        .navMenu>li:hover{
+            background-color: beige;
+        }
+
+        /* 드롭다운 메뉴 숨기기 */
+        .navMenu li ul {
+            display: none;
+            position: absolute;            
+            width: inherit;
+            background-color: white;
+            padding-top: 1px;
+            padding-bottom: 1px;
+            border: 0px solid black;
+        }
+
+        /* hover 상태에서 드롭다운 메뉴 표시 */
+        .navMenu li:hover ul {
+            display: block;
+            width: inherit;
+            position: relative;
+            top: 25%;
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        /* 드롭다운 메뉴 스타일 */
+        .navMenu li ul li {
+
+        }
+        .navMenu li ul li:hover {
+            background-color: lightgray;
+        }
+        #blog p {
+            font-size: 1.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #facebook img, #instagram img  {
+            height: 1.2em;
+        }
+    </style>
+
+
+    <title>Document</title>
+</head>
+<body>
+    <!--로고, 메뉴--> 
+    <header>
+        <nav>
+            <a class="logo" href="./exam_index.html">
+                <img src="https://jwonchi.github.io/kopoclass/ttt/mainlogo.png" alt="로고" style="width: 100%;">
+            </a>
+            <ul class="navMenu">
+                <li id="menu_introduce"><a href="./exam_introduce.html">내 소개</a></li>
+                <li id="menu_skills">기술스택
+                    <ul>
+                        <li><a href="./exam_skill_front.html">프론트</a></li>
+                        <li><a href="./exam_skill_back.html">벡엔드</a></li>
+                    </ul>
+                </li>
+                <li id="menu_career"><a href="./exam_career.html">경력</a></li>
+                <li id="menu_blog"><a href="./exam_blog.html">블로그</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div id="blog">
+
+        </div>
+        <script>
+            // JSON 파일 URL
+            const jsonUrl = 'https://prof-jwchi.github.io/frontEnd/test/blog.json';
+            const blog = document.getElementById("blog");
+            
+            // fetch API를 사용하여 JSON 파일 가져오기
+            fetch(jsonUrl)
+                .then(response => {
+                    // 응답을 JSON으로 변환
+                    return response.json();
+                })
+                .then(data => {
+                    // 변환된 JSON 객체 사용
+                    console.log(data);
+                    // 여기서 data는 JSON 파일의 내용을 객체로 변환한 것입니다.
+    
+                    data.blogs.forEach(element => {
+                        blog.innerHTML += "<p>" + element.title + `</p>`;
+                        console.log(element.title);
+                    });
+                    
+    
+                })
+                .catch(error => {
+                    // 오류 처리
+                    console.error('JSON 파일을 가져오는 데 실패했습니다.', error);
+                });
+    
+            
+        </script>
+    </main>
+    <footer>
+        <ul class="contact">
+            <li id="facebook">
+                <a href="#페이스북">페이스북<img src="./images/facebook.png"></a></li>
+            <li id="instagram"><a href="#인스타그램">인스타그램<img src="./images/instagram.png"></a></li>
+            <li id="email" style="display:flex">Mail:<a href="mailto:minjoon@gggmail.com" >minjoon<wbr>@gggmail.com</a></li>
+        </ul>
+    </footer>
+</body>
+</html>

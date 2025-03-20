@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script type="text/javascript" src="/___vscode_livepreview_injected_script"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+
+    <style>
+        .black-han-sans-regular {
+        font-family: "Black Han Sans", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        }
+
+
+        * {
+            font-family: "Black Han Sans";
+            
+            padding: 0px;
+        }
+        header, footer {
+            height: 15vh;
+            display: flex;
+            justify-content: center;
+            border: 1px solid rgb(158, 158, 158);
+        }
+        .logo {
+            width: 30%;
+        }
+        section .indexPage {
+            display: flex;
+            height: 70vh;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+        nav{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-direction: row;
+        }
+        header ul, footer ul{
+            width: 40vw;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-direction: row;            
+            list-style: none;
+        }
+        li {
+            min-width: fit-content;
+        }
+        
+        a {
+            text-align: center;
+            vertical-align: middle;
+        }
+        a:link {
+            color: black;
+            text-decoration: none;
+        }
+        a:visited {
+            color: black;
+            text-decoration: none;
+        }
+        .navMenu li{
+            position: relative;
+            width: 5rem;
+            height: 2rem;
+            text-align: center;
+
+            font-size: 1.2em;
+        }
+
+        .navMenu>li#menu_introduce {
+            background-color: orange;
+        }
+
+        .navMenu>li:hover{
+            background-color: beige;
+        }
+
+        /* 드롭다운 메뉴 숨기기 */
+        .navMenu li ul {
+            display: none;
+            position: absolute;            
+            width: inherit;
+            background-color: white;
+            padding-top: 1px;
+            padding-bottom: 1px;
+            border: 0px solid black;
+        }
+
+        /* hover 상태에서 드롭다운 메뉴 표시 */
+        .navMenu li:hover ul {
+            display: block;
+            width: inherit;
+            position: relative;
+            top: 25%;
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        /* 드롭다운 메뉴 스타일 */
+        .navMenu li ul li {
+
+        }
+        .navMenu li ul li:hover {
+            background-color: lightgray;
+        }
+        article.introduce_kmj {
+            display: flex;
+            align-items: center;
+            height: 70vh;
+            font-size: 4vmin;
+        }
+
+        #photo {
+            width: 30vw;
+        }
+
+        #photo:hover {
+            width: 36vw;
+            transition: all 1s;
+        }
+        #facebook img, #instagram img  {
+            height: 1.2em;
+        }
+    </style>
+
+
+    <title>Document</title>
+</head>
+<body>
+    <!--로고, 메뉴--> 
+    <header>
+        <nav>
+            <a class="logo" href="./exam_index.html">
+                <img src="https://jwonchi.github.io/kopoclass/ttt/mainlogo.png" alt="로고" style="width: 100%;">
+            </a>
+            <ul class="navMenu">
+                <li id="menu_introduce"><a href="./exam_introduce.html">내 소개</a></li>
+                <li id="menu_skills">기술스택
+                    <ul>
+                        <li><a href="./exam_skill_front.html">프론트</a></li>
+                        <li><a href="./exam_skill_back.html">벡엔드</a></li>
+                    </ul>
+                </li>
+                <li id="menu_career"><a href="./exam_career.html">경력</a></li>
+                <li id="menu_blog"><a href="./exam_blog.html">블로그</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="contents">
+            <article class="introduce_kmj">        
+                <img id="photo" src="./images/kimminjun.png">
+                <p>대학 졸업을 앞둔 컴퓨터 공학 전공의 학생, 
+                    김민준입니다. 전공 수업과 여러 프로젝트를 
+                    통해 소프트웨어 개발에 필요한 다양한 
+                    프로그래밍 언어와 기술을 익혔습니다. 특히, 
+                    인공 지능과 모바일 애플리케이션 개발에 
+                    깊은 관심을 가지고 있습니다. 대학교에서는 
+                    동아리 활동을 통해 팀워크와 리더십 경험도 
+                    쌓았습니다. 졸업 후에는 이러한 기술과 
+                    경험을 바탕으로 IT 분야에서 전문 개발자로 
+                    성장하고자 합니다.
+                    </p>
+            </article>
+        </section>
+    </main>
+    <footer>
+        <ul class="contact">
+            <li id="facebook">
+                <a href="#페이스북">페이스북<img src="./images/facebook.png"></a></li>
+            <li id="instagram"><a href="#인스타그램">인스타그램<img src="./images/instagram.png"></a></li>
+            <li id="email" style="display:flex">Mail:<a href="mailto:minjoon@gggmail.com" >minjoon<wbr>@gggmail.com</a></li>
+        </ul>
+    </footer>
+</body>
+</html>

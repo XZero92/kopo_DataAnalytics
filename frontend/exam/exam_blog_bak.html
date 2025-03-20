@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        #blog p {
+            font-size: 1.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <div id="blog">
+
+    </div>
+    <script>
+        // JSON 파일 URL
+        const jsonUrl = 'https://prof-jwchi.github.io/frontEnd/test/blog.json';
+        const blog = document.getElementById("blog");
+        
+        // fetch API를 사용하여 JSON 파일 가져오기
+        fetch(jsonUrl)
+            .then(response => {
+                // 응답을 JSON으로 변환
+                return response.json();
+            })
+            .then(data => {
+                // 변환된 JSON 객체 사용
+                console.log(data);
+                // 여기서 data는 JSON 파일의 내용을 객체로 변환한 것입니다.
+
+                data.blogs.forEach(element => {
+                    blog.innerHTML += "<p>" + element.title + `</p>`;
+                    console.log(element.title);
+                });
+                
+
+            })
+            .catch(error => {
+                // 오류 처리
+                console.error('JSON 파일을 가져오는 데 실패했습니다.', error);
+            });
+
+        
+    </script>
+</body>
+</html>
