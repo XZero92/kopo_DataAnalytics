@@ -48,5 +48,16 @@ public class Hello {
         System.out.print("score 입력: ");
         String strScore = scnr.nextLine();
         System.out.println("입력 받은 score: " + strScore);
+
+        int a = 3;
+        int b = 5;
+        int c = a * b;
+        System.out.printf("가로 %d, 세로 %d,의 직사각형 면적은 %d", a, b, c);
+
+        boolean bulin = true;
+        char gender = '남';
+        double piDouble = 3.14159;
+        long piLong = 314159265853979L;
+        String walkingDay = "오늘 하루 열심히 걸어, 9000 걸음을 채웠다.";
     }
 }
