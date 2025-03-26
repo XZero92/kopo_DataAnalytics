@@ -203,6 +203,8 @@ public class java_03_2_ex2_calEx {
         String hobby = "여행";
         System.out.println(System.identityHashCode(hobby));
         System.out.println(System.identityHashCode("여행"));
+        hobby = null;
+        System.out.println(System.identityHashCode(hobby));
 
         int[] score = new int[] {1, 2, 3};
         String[] strings = new String[3];
