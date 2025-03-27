@@ -5,6 +5,9 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         // arrayExample();
+        //memberEx();
+        //memberServiceEx();
+        //printerEx();
     }
     public static void arrayExample() {
         int[] scores = {83, 90, 87, 85, 95};
@@ -175,4 +178,21 @@ public class Main {
 
     }
 
+    public static void memberEx() {
+        Member user1 = new Member("홍길동", "hong");
+    }
+
+    public static void memberServiceEx() {
+        MemberService service = new MemberService();
+        service.login("hong", "12345");
+        service.logout("hong");
+    }
+
+    public static void printerEx() {
+        Printer printer = new Printer();
+        printer.println(10);
+        printer.println(true);
+        printer.println(5.7);
+        printer.println("홍길동");
+    }
 }
