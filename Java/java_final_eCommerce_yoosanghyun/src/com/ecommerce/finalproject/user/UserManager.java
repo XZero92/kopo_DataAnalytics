@@ -1,14 +1,20 @@
 package com.ecommerce.finalproject.user;
 
-import java.security.PublicKey;
+import com.ecommerce.finalproject.util.JsonUtils;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.ArrayList;
 
 public class UserManager {
+    private static final String USER_DB_FILE = "src/com/ecommerce/finalproject/data/userdb.json";
+    public static final String PW_INVALID_LENGTH = "E_PW_LENGTH";
+    public static final String PW_INVALID_CHAR = "E_PW_CHAR";
+
+    private static UserManager instance = new UserManager();
     private ArrayList<UserData> userList;
     private UserData loggedInUser;
-
-    public static final String PW_INVAL_LENGTH = "E_PW_LENGTH";
-    public static final String PW_INVAL_CHAR = "E_PW_CHAR";
 
     public static boolean checkIDValiation(String id) {
         return id.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
@@ -23,16 +29,23 @@ public class UserManager {
     }
 
     public UserManager() {
-        userList = new ArrayList<>();
+        loadUsers();
         loggedInUser = null;
+    }
+
+    public static UserManager getInstance() {
+        return instance;
     }
 
     public boolean registerUser(UserData user) {
         if (userList.isEmpty()) {
             user.setUserType(UserData.USER_ADMIN);
         }
-
-        return userList.add(user);
+        boolean added = userList.add(user);
+        if (added) {
+            saveUsers();
+        }
+        return added;
     }
 
     public boolean updateUser(String userID, UserData updatedUser) {
@@ -42,6 +55,7 @@ public class UserManager {
                 user.setUserPassword(updatedUser.getUserPassword());
                 user.setUserMobileNumber(updatedUser.getUserMobileNumber());
                 user.setUserEmail(updatedUser.getUserEmail());
+                saveUsers();
                 return true;
             }
         }
@@ -62,6 +76,7 @@ public class UserManager {
         for( UserData user : userList) {
             if (user.getUserID().equals(userID)) {
                 user.setUserStatus(UserData.STATUS_DELETED);
+                saveUsers();
                 return true;
             }
         }
@@ -86,5 +101,17 @@ public class UserManager {
 
     public UserData getLoggedInUser() {
         return loggedInUser;
+    }
+
+    private void saveUsers() {
+        JsonUtils.writeListToFile(USER_DB_FILE, userList);
+    }
+
+    private void loadUsers() {
+        Type userListType = new TypeToken<ArrayList<UserData>>() {}.getType();
+        List<UserData> loadedUsers = JsonUtils.readListFromFile(USER_DB_FILE, userListType);
+        if (loadedUsers != null) {
+            userList = new ArrayList<>(loadedUsers);
+        }
     }
 }

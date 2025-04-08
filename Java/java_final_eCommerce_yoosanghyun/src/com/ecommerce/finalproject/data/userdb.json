@@ -1,0 +1,52 @@
+[
+  {
+    "userID": "user1@example.com",
+    "userName": "홍길동",
+    "userPassword": "password123",
+    "userMobileNumber": "010-1234-5678",
+    "userEmail": "user1@example.com",
+    "userStatus": "ST01",
+    "userType": "10",
+    "creationDate": "2023-10-01T12:00:00"
+  },
+  {
+    "userID": "user2@example.com",
+    "userName": "김철수",
+    "userPassword": "pass456",
+    "userMobileNumber": "010-2345-6789",
+    "userEmail": "user2@example.com",
+    "userStatus": "ST01",
+    "userType": "10",
+    "creationDate": "2023-10-02T12:00:00"
+  },
+  {
+    "userID": "user3@example.com",
+    "userName": "이영희",
+    "userPassword": "secure789",
+    "userMobileNumber": "010-3456-7890",
+    "userEmail": "user3@example.com",
+    "userStatus": "ST01",
+    "userType": "10",
+    "creationDate": "2023-10-03T12:00:00"
+  },
+  {
+    "userID": "admin@example.com",
+    "userName": "관리자",
+    "userPassword": "admin123",
+    "userMobileNumber": "010-4567-8901",
+    "userEmail": "admin@example.com",
+    "userStatus": "ST01",
+    "userType": "20",
+    "creationDate": "2023-10-04T12:00:00"
+  },
+  {
+    "userID": "user4@example.com",
+    "userName": "박민수",
+    "userPassword": "mypassword",
+    "userMobileNumber": "010-5678-9012",
+    "userEmail": "user4@example.com",
+    "userStatus": "ST01",
+    "userType": "10",
+    "creationDate": "2023-10-05T12:00:00"
+  }
+]

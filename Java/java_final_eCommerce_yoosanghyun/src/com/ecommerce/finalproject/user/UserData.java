@@ -16,10 +16,11 @@ public class UserData {
     private String userEmail;
     private String userStatus;
     private String userType;
-    private final Date creationDate;
+    private Date creationDate;
 
     public UserData() {
         this.userStatus = STATUS_NORMAL;
+        this.userType = USER_COMMON;
         this.creationDate = new Date();
     }
 

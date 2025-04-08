@@ -1,12 +1,10 @@
 package com.ecommerce.finalproject.product;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import com.ecommerce.finalproject.util.DateUtils;
+
 import java.util.Date;
 
 public class ProductData {
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
-
     private String productCode;
     private String productName;
     private String productDescription;
@@ -24,7 +22,22 @@ public class ProductData {
         this.creationDate = new Date();
     }
 
-    public ProductData(String productCode, String productName, String productDescription, String productContentsID, Date productStartDate, Date productEndDate, int productPrice, int productSalePrice, int productStock, int deliveryFee) {
+    public ProductData(ProductData data) {
+        this.productCode = data.productCode;
+        this.productName = data.productName;
+        this.productDescription = data.productDescription;
+        this.productContentsID = data.productContentsID;
+        this.productStartDate = data.productStartDate;
+        this.productEndDate = data.productEndDate;
+        this.productPrice = data.productPrice;
+        this.productSalePrice = data.productSalePrice;
+        this.productStock = data.productStock;
+        this.deliveryFee = data.deliveryFee;
+        this.registeredUserID = data.registeredUserID;
+        this.creationDate = data.creationDate;
+    }
+
+    public ProductData(String productCode, String productName, String productDescription, String productContentsID, Date productStartDate, Date productEndDate, int productPrice, int productSalePrice, int productStock, int deliveryFee, Date creationDate) {
         this.productCode = productCode;
         this.productName = productName;
         this.productDescription = productDescription;
@@ -35,7 +48,7 @@ public class ProductData {
         this.productSalePrice = productSalePrice;
         this.productStock = productStock;
         this.deliveryFee = deliveryFee;
-        this.creationDate = new Date();
+        this.creationDate = creationDate;
     }
 
     public String getProductContentsID() {
@@ -78,12 +91,7 @@ public class ProductData {
     }
 
     public void setProductStartDate(String productStartDate) {
-        try {
-            this.productStartDate = DATE_FORMAT.parse(productStartDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
+        this.productStartDate = DateUtils.parseDate(productStartDate);
     }
 
     public Date getProductEndDate() {
@@ -95,11 +103,7 @@ public class ProductData {
     }
 
     public void setProductEndDate(String productEndDate) {
-        try {
-            this.productEndDate = DATE_FORMAT.parse(productEndDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        this.productEndDate = DateUtils.parseDate(productEndDate);
     }
 
     public int getProductPrice() {

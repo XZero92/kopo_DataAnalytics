@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class UserEx {
     Scanner sc = new Scanner(System.in);
-    UserManager userManager = new UserManager();
+    UserManager userManager = UserManager.getInstance();
 
     public void showMenu() {
         if(userManager.getLoggedInUser() != null) {
@@ -15,8 +15,8 @@ public class UserEx {
             System.out.println("=================================");
             System.out.println("| 1. 로그인 | 2. 회원가입 | 0. 종료 |");
             System.out.println("=================================");
-
         }
+        System.out.print("메뉴를 선택하세요: ");
     }
 
     public void selectMenu() {
@@ -44,6 +44,7 @@ public class UserEx {
                     break;
                 case "0":
                     System.out.println("프로그램을 종료합니다.");
+                    System.exit(0);
                     break;
                 default:
                     System.out.println("해당하는 메뉴가 없습니다.");
@@ -110,10 +111,10 @@ public class UserEx {
                 continue;
             }
             switch (UserManager.checkPWValidation(password)) {
-                case UserManager.PW_INVAL_LENGTH:
+                case UserManager.PW_INVALID_LENGTH:
                     System.out.println("비밀번호는 5자 이상, 15자 이하로 입력해야 합니다.");
                     continue;
-                case UserManager.PW_INVAL_CHAR:
+                case UserManager.PW_INVALID_CHAR:
                     System.out.println("비밀번호에는 숫자, 알파벳 대문자, 소문자가 각각 하나 이상이 포함되어야합니다.");
                     continue;
                 default:
