@@ -2,24 +2,25 @@ package com.ecommerce.finalproject.product;
 
 import com.ecommerce.finalproject.util.DateUtils;
 
-import java.util.Date;
+//import java.util.Date;
+import java.time.LocalDate;
 
 public class ProductData {
     private String productCode;
     private String productName;
     private String productDescription;
     private String productContentsID;
-    private Date productStartDate;
-    private Date productEndDate;
+    private LocalDate productStartDate;
+    private LocalDate productEndDate;
     private int productPrice;
     private int productSalePrice;
     private int productStock;
     private int deliveryFee;
     private String registeredUserID;
-    private Date creationDate;
+    private LocalDate creationDate;
 
     public ProductData() {
-        this.creationDate = new Date();
+        this.creationDate = LocalDate.now();
     }
 
     public ProductData(ProductData data) {
@@ -37,7 +38,7 @@ public class ProductData {
         this.creationDate = data.creationDate;
     }
 
-    public ProductData(String productCode, String productName, String productDescription, String productContentsID, Date productStartDate, Date productEndDate, int productPrice, int productSalePrice, int productStock, int deliveryFee, Date creationDate) {
+    public ProductData(String productCode, String productName, String productDescription, String productContentsID, LocalDate productStartDate, LocalDate productEndDate, int productPrice, int productSalePrice, int productStock, int deliveryFee, LocalDate creationDate) {
         this.productCode = productCode;
         this.productName = productName;
         this.productDescription = productDescription;
@@ -83,27 +84,27 @@ public class ProductData {
         this.productDescription = productDescription;
     }
 
-    public Date getProductStartDate() {
+    public LocalDate getProductStartDate() {
         return productStartDate;
     }
-    public void setProductStartDate(Date productStartDate) {
+    public void setProductStartDate(LocalDate productStartDate) {
         this.productStartDate = productStartDate;
     }
 
     public void setProductStartDate(String productStartDate) {
-        this.productStartDate = DateUtils.parseDate(productStartDate);
+        this.productStartDate = LocalDate.parse(productStartDate);
     }
 
-    public Date getProductEndDate() {
+    public LocalDate getProductEndDate() {
         return productEndDate;
     }
 
-    public void setProductEndDate(Date productEndDate) {
+    public void setProductEndDate(LocalDate productEndDate) {
         this.productEndDate = productEndDate;
     }
 
     public void setProductEndDate(String productEndDate) {
-        this.productEndDate = DateUtils.parseDate(productEndDate);
+        this.productEndDate = LocalDate.parse(productEndDate);
     }
 
     public int getProductPrice() {
@@ -142,7 +143,7 @@ public class ProductData {
         return registeredUserID;
     }
 
-    public Date getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
 }

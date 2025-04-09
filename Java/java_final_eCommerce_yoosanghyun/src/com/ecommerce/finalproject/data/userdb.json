@@ -7,7 +7,7 @@
     "userEmail": "user1@example.com",
     "userStatus": "ST01",
     "userType": "10",
-    "creationDate": "2023-10-01T12:00:00"
+    "creationDate": "2023-10-01"
   },
   {
     "userID": "user2@example.com",
@@ -17,7 +17,7 @@
     "userEmail": "user2@example.com",
     "userStatus": "ST01",
     "userType": "10",
-    "creationDate": "2023-10-02T12:00:00"
+    "creationDate": "2023-10-02"
   },
   {
     "userID": "user3@example.com",
@@ -27,7 +27,7 @@
     "userEmail": "user3@example.com",
     "userStatus": "ST01",
     "userType": "10",
-    "creationDate": "2023-10-03T12:00:00"
+    "creationDate": "2023-10-03"
   },
   {
     "userID": "admin@example.com",
@@ -37,7 +37,7 @@
     "userEmail": "admin@example.com",
     "userStatus": "ST01",
     "userType": "20",
-    "creationDate": "2023-10-04T12:00:00"
+    "creationDate": "2023-10-04"
   },
   {
     "userID": "user4@example.com",
@@ -47,6 +47,6 @@
     "userEmail": "user4@example.com",
     "userStatus": "ST01",
     "userType": "10",
-    "creationDate": "2023-10-05T12:00:00"
+    "creationDate": "2023-10-05"
   }
 ]
