@@ -14,19 +14,23 @@ import java.util.stream.Collectors;
 public class DisplayProducts {
     private static final String PRODUCT_DB_PATH = "src/com/ecommerce/finalproject/data/productdb.json";
 
-    public static void main(String[] args) {
-        DisplayProducts displayProducts = new DisplayProducts();
-        displayProducts.showMenu();
-        displayProducts.selectMenu();
+    public void run() {
+        while (true) {
+            showMenu();
+            if (!selectMenu()) {
+                break;
+            }
+        }
     }
+
     public void showMenu() {
-        System.out.println("=========================================");
-        System.out.println("| 1. 상품 검색 | 2. 상품 목록 조회 | 0. 종료 |");
-        System.out.println("=========================================");
+        System.out.println("============================================");
+        System.out.println("| 1. 상품 검색 | 2. 상품 목록 조회 | 0. 뒤로가기 |");
+        System.out.println("============================================");
         System.out.print("메뉴를 선택하세요> ");
     }
 
-    public void selectMenu() {
+    public boolean selectMenu() {
         Scanner scanner = new Scanner(System.in);
         String menuIdx = scanner.nextLine();
 
@@ -38,11 +42,11 @@ public class DisplayProducts {
                 showProductList();
                 break;
             case "0":
-                System.out.println("프로그램을 종료합니다.");
-                break;
+                return false;
             default:
                 System.out.println("해당하는 메뉴가 없습니다.");
         }
+        return true;
     }
 
     private List<ProductData> loadProductsFromFile() {
@@ -74,11 +78,11 @@ public class DisplayProducts {
                     .collect(Collectors.toList());
         }
         System.out.println("=========================================");
-        System.out.println("상품명\t|\t가격\t|\t설명");
+        System.out.println("상품명\t|\t가격\t|\t재고");
         System.out.println("=========================================");
         for (ProductData product : products) {
-            System.out.printf("%s\t|\t%d\t|\t설명\t\n",
-                    product.getProductName(), product.getProductPrice(), product.getProductDescription());
+            System.out.printf("%-10s\t|\t%-10d\t|\t%-10d\t\n",
+                    product.getProductName(), product.getProductPrice(), product.getDeliveryFee());
         }
         System.out.println("=========================================");
     }
@@ -100,11 +104,17 @@ public class DisplayProducts {
             return;
         }
 
-        System.out.println("=========================================");
         for (ProductData product : filteredProducts) {
-            System.out.printf("상품명: %s | 가격: %d | 설명: %s\n",
-                    product.getProductName(), product.getProductPrice(), product.getProductDescription());
+            System.out.println("###############################");
+            System.out.println("[상품 상세 정보]");
+            System.out.println("상품명: " + product.getProductName());
+            System.out.println("상세 설명: " + product.getProductDescription());
+            System.out.println("판매 시작일: " + product.getProductStartDate());
+            System.out.println("판매 종료일: " + product.getProductEndDate());
+            System.out.println("가격: " + product.getProductPrice());
+            System.out.println("재고: " + product.getProductStock());
+            System.out.println("배송비: " + product.getDeliveryFee());
+            System.out.println("###############################");
         }
-        System.out.println("=========================================");
     }
 }

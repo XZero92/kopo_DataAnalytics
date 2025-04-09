@@ -6,20 +6,28 @@ public class UserEx {
     Scanner sc = new Scanner(System.in);
     UserManager userManager = UserManager.getInstance();
 
+    public void run() {
+        while (true) {
+            showMenu();
+            if(!selectMenu())
+                break;
+        }
+    }
+
     public void showMenu() {
         if(userManager.getLoggedInUser() != null) {
-            System.out.println("============================================================");
-            System.out.println("| 1. 로그아웃 | 2. 회원정보 수정 | 3. 비밀번호 변경 | 4. 탈퇴 요청 |");
-            System.out.println("============================================================");
+            System.out.println("=======================================================================");
+            System.out.println("| 1. 로그아웃 | 2. 회원정보 수정 | 3. 비밀번호 변경 | 4. 탈퇴 요청 | 0. 뒤로가기");
+            System.out.println("=======================================================================");
         } else {
             System.out.println("=================================");
             System.out.println("| 1. 로그인 | 2. 회원가입 | 0. 종료 |");
             System.out.println("=================================");
         }
-        System.out.print("메뉴를 선택하세요: ");
+        System.out.print("메뉴를 선택하세요> ");
     }
 
-    public void selectMenu() {
+    public boolean selectMenu() {
         String menuIdx = sc.nextLine();
 
         if(userManager.getLoggedInUser() != null) {
@@ -31,6 +39,14 @@ public class UserEx {
                 case "2":
                     updateUser();
                     break;
+                case "3":
+                    changePassword();
+                    break;
+                case "4":
+                    deleteUser();
+                    break;
+                case "0":
+                    return false;
                 default:
                     System.out.println("해당하는 메뉴가 없습니다.");
             }
@@ -50,6 +66,7 @@ public class UserEx {
                     System.out.println("해당하는 메뉴가 없습니다.");
             }
         }
+        return true;
     }
 
     public void loginUser() {
@@ -137,6 +154,9 @@ public class UserEx {
         newUser.setUserEmail(id);
 
         userManager.registerUser(newUser);
+
+        System.out.println("회원가입이 완료되었습니다.");
+        userManager.loginUser(id, password);
     }
 
     public void updateUser() {
@@ -189,5 +209,23 @@ public class UserEx {
         }
 
         userManager.changeUserPassword(id, newPassword);
+    }
+
+    public void deleteUser() {
+        System.out.println("-----------");
+        System.out.println("회원탈퇴 요청");
+        System.out.println("-----------");
+
+        String id = userManager.getLoggedInUser().getUserID();
+
+        System.out.print("비밀번호: ");
+        String password = sc.nextLine();
+
+        if (userManager.getLoggedInUser().getUserPassword().equals(password)) {
+            userManager.deleteUser(id);
+            System.out.println("회원탈퇴 요청이 완료되었습니다.");
+        } else {
+            System.out.println("비밀번호가 일치하지 않습니다.");
+        }
     }
 }

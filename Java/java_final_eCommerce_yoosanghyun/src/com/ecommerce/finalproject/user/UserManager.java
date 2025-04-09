@@ -22,7 +22,7 @@ public class UserManager {
     public static String checkPWValidation(String password) {
         if (password.length() < 5 && password.length() > 15)
             return "E_PW_LENGTH";
-        if (password.matches(".*[a-zA-Z].*") && password.matches(".*[0-9].*"))
+        if (!password.matches(".*[a-z].*") || !password.matches(".*[A-Z].*") || !password.matches(".*[0-9].*"))
             return "E_PW_CHAR";
 
         return password;

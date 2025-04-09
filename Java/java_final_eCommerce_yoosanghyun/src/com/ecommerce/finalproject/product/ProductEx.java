@@ -7,20 +7,22 @@ public class ProductEx {
     Scanner sc = new Scanner(System.in);
     ProductManager productManager = new ProductManager();
 
-    public static void main(String[] args) {
-        ProductEx productEx = new ProductEx();
-        productEx.showMenu();
-        productEx.selectMenu();
+    public void run() {
+        while (true) {
+            showMenu();
+            if(!selectMenu())
+                break;
+        }
     }
 
     public void showMenu() {
-        System.out.println("================================================================");
-        System.out.println("| 1. 상품 등록 | 2. 상품 수정 | 3. 상품 삭제 | 4. 상품 조회 | 0. 종료 |");
-        System.out.println("================================================================");
+        System.out.println("===================================================================");
+        System.out.println("| 1. 상품 등록 | 2. 상품 수정 | 3. 상품 삭제 | 4. 상품 조회 | 0. 뒤로가기 |");
+        System.out.println("===================================================================");
         System.out.print("메뉴를 선택하세요> ");
     }
 
-    public void selectMenu() {
+    public boolean selectMenu() {
         String menuIdx = sc.nextLine();
 
         switch(menuIdx) {
@@ -34,17 +36,17 @@ public class ProductEx {
                 deleteProduct();
                 break;
             case "4":
-                showProducts();
+                findProducts();
                 break;
             case "0":
-                System.out.println("프로그램을 종료합니다.");
-                break;
+                return false;
             default:
                 System.out.println("해당하는 메뉴가 없습니다.");
         }
+        return true;
     }
 
-    public void showProducts() {
+    public void findProducts() {
         System.out.println("------------");
         System.out.println("상품 조회");
         System.out.println("------------");
@@ -65,6 +67,7 @@ public class ProductEx {
         System.out.println("판매 종료일: " + product.getProductEndDate());
         System.out.println("가격: " + product.getProductPrice());
         System.out.println("재고: " + product.getProductStock());
+        System.out.println("배송비: " + product.getDeliveryFee());
         System.out.println("###############################");
     }
 
@@ -89,6 +92,7 @@ public class ProductEx {
         int deliveryFee = Integer.parseInt(sc.nextLine());
 
         ProductData product = new ProductData();
+        product.setProductCode(productManager.generateProductCode());
         product.setProductName(name);
         product.setProductDescription(description);
         product.setProductStartDate(startDate);
@@ -97,6 +101,7 @@ public class ProductEx {
         product.setProductStock(stock);
         product.setDeliveryFee(deliveryFee);
 
+        System.out.println("상품 코드는 " + product.getProductCode() + "입니다.");
         productManager.addProduct(product);
     }
 
@@ -178,6 +183,30 @@ public class ProductEx {
 
         System.out.print("삭제할 상품 ID: ");
         String productId = sc.nextLine();
+
+        ProductData product = productManager.getProductById(productId);
+
+        if(product == null) {
+            System.out.println("해당 상품이 존재하지 않습니다.");
+            return;
+        } else {
+            System.out.println("###############################");
+            System.out.println("[현재 상품 정보]");
+            System.out.println("상품명: " + product.getProductName());
+            System.out.println("상세 설명: " + product.getProductDescription());
+            System.out.println("판매 시작일: " + product.getProductStartDate());
+            System.out.println("판매 종료일: " + product.getProductEndDate());
+            System.out.println("가격: " + product.getProductPrice());
+            System.out.println("재고: " + product.getProductStock());
+            System.out.println("배송비: " + product.getDeliveryFee());
+            System.out.println("###############################");
+            System.out.print("정말로 삭제하시겠습니까? (y/n): ");
+            String confirm = sc.nextLine();
+            if(!confirm.equalsIgnoreCase("y")) {
+                System.out.println("삭제가 취소되었습니다.");
+                return;
+            }
+        }
 
         if(productManager.deleteProduct(productId)) {
             System.out.println("상품이 삭제되었습니다.");

@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ProductManager {
     private static final String PRODUCT_DB_PATH = "src/com/ecommerce/finalproject/data/productdb.json";
@@ -29,13 +30,17 @@ public class ProductManager {
     }
 
     public void addProduct(ProductData product) {
+        if(product.getProductCode() == null) {
+            product.setProductCode(generateProductCode());
+        }
         products.add(product);
         saveProductsToFile();
     }
 
     public void addProduct(String productName, String productDescription, String productStartDate, String productEndDate, int productPrice, int productSalePrice, int productQuantity, int deliveryFee) {
         ProductData newProduct = new ProductData();
-        newProduct.setProductCode(productName);
+        newProduct.setProductCode(generateProductCode());
+        newProduct.setProductName(productName);
         newProduct.setProductDescription(productDescription);
         newProduct.setProductStartDate(productStartDate);
         newProduct.setProductEndDate(productEndDate);
@@ -103,6 +108,13 @@ public class ProductManager {
                 break;
             }
         }
+    }
+
+    public String generateProductCode() {
+        Random random = new Random();
+        char randomLetter = (char) ('A' + random.nextInt(26)); // A~Z 중 랜덤한 알파벳
+        int randomNumber = random.nextInt(100000); // 0~99999 사이의 숫자
+        return String.format("%c%05d", randomLetter, randomNumber); // 알파벳 + 5자리 숫자
     }
 
     private void loadProductsFromFile() {

@@ -5,12 +5,12 @@ import com.google.gson.GsonBuilder;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 public class JsonUtils {
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateAdapter())
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
             .create();
 
     public static <T> List<T> readListFromFile(String filePath, Type type) {
