@@ -35,7 +35,7 @@ public class UserEx {
                 case "1":
                     userManager.logoutUser();
                     System.out.println("로그아웃 되었습니다.");
-                    break;
+                    return false;
                 case "2":
                     updateUser();
                     break;

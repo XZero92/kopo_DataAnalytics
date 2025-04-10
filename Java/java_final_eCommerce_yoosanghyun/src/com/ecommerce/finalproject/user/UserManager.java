@@ -66,6 +66,7 @@ public class UserManager {
         for( UserData user : userList) {
             if (user.getUserID().equals(userID)) {
                 user.setUserPassword(newPassword);
+                saveUsers();
                 return true;
             }
         }

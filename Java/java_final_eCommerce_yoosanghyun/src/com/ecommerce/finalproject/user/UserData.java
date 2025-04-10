@@ -1,6 +1,6 @@
 package com.ecommerce.finalproject.user;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class UserData {
     public static final String STATUS_REQUESTED = "ST00";
@@ -16,12 +16,12 @@ public class UserData {
     private String userEmail;
     private String userStatus;
     private String userType;
-    private Date creationDate;
+    private LocalDate creationDate;
 
     public UserData() {
         this.userStatus = STATUS_NORMAL;
         this.userType = USER_COMMON;
-        this.creationDate = new Date();
+        this.creationDate = LocalDate.now();
     }
 
     public UserData(String userID, String userName, String userPassword, String userMobileNumber, String userEmail, String userType) {
@@ -32,7 +32,7 @@ public class UserData {
         this.userEmail = userEmail;
         this.userStatus = STATUS_NORMAL;
         this.userType = userType;
-        this.creationDate = new Date();
+        this.creationDate = LocalDate.now();
     }
 
     public String getUserID() {
@@ -91,7 +91,7 @@ public class UserData {
         this.userType = userType;
     }
 
-    public Date getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
 }
