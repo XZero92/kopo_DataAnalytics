@@ -1,5 +1,7 @@
 package com.example.jsp_19_memberex_ysh;
 
+import com.example.jsp_19_memberex_ysh.dao.MemberDAO;
+import com.example.jsp_19_memberex_ysh.dto.MemberDTO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +31,23 @@ public class JoinOk extends HttpServlet {
         String mobile = request.getParameter("mobile");
         String gender = request.getParameter("gender");
 
-        DBConnection db = new DBConnection();
+        MemberDTO member = new MemberDTO(id, paswd, username, email, mobile, gender);
+        MemberDAO dao = new MemberDAO();
+
+        if(dao.insertMember(member)) {
+            request.setAttribute("id", id);
+            request.setAttribute("username", username);
+            request.setAttribute("email", email);
+            request.setAttribute("mobile", mobile);
+            request.setAttribute("gender", gender);
+
+            // joinResult.jsp로 포워딩
+            request.getRequestDispatcher("joinResult.jsp").forward(request, response);
+        } else {
+            response.getWriter().println("회원가입 실패");
+        }
+
+        /*DBConnection db = new DBConnection();
         Connection conn = null;
         PreparedStatement pstmt = null;
         int result = 0;
@@ -71,6 +89,6 @@ public class JoinOk extends HttpServlet {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 }

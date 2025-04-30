@@ -12,14 +12,14 @@ public class DBConnection {
     private String upw = "tiger";*/
 
     // 데이터분석과 서버실 DB
-    private String url = "jdbc:oracle:thin:@//192.168.217.202:1521/KOPODA";
+    /*private String url = "jdbc:oracle:thin:@//192.168.217.202:1521/KOPODA";
     private String uid = "da2509";
-    private String upw = "da09";
+    private String upw = "da09";*/
 
-    // 클라우드 DB (접근 실패)
-    /*private String url = "jdbc:oracle:thin:@dinkdb_medium?TNS_ADMIN=C://Users/kopo/Downloads/Wallet_DinkDB";
+    // 클라우드 DB
+    private String url = "jdbc:oracle:thin:@dinkdb_medium?TNS_ADMIN=C://Users/kopo/Downloads/Wallet_DinkDB";
     private String uid = "DA2509";
-    private String upw = "Data2509";*/
+    private String upw = "Data2509";
 
     private Connection connection = null;
 

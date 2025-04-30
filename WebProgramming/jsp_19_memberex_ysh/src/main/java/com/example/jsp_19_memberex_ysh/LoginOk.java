@@ -1,5 +1,7 @@
 package com.example.jsp_19_memberex_ysh;
 
+import com.example.jsp_19_memberex_ysh.dao.MemberDAO;
+import com.example.jsp_19_memberex_ysh.dto.MemberDTO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
@@ -26,7 +28,26 @@ public class LoginOk extends HttpServlet {
         String id = request.getParameter("id");
         String paswd = request.getParameter("paswd");
 
-        DBConnection db = new DBConnection();
+        MemberDAO dao = new MemberDAO();
+        MemberDTO member = dao.loginMember(id, paswd);
+
+        if (member != null) {
+            request.getSession().setAttribute("userId", member.getId());
+            request.getSession().setAttribute("username", member.getUsername());
+
+            // 쿠키 생성 및 추가
+            Cookie userCookie = new Cookie("userId", id);
+            userCookie.setMaxAge(60 * 60 * 24); // 1일 동안 유지
+            response.addCookie(userCookie);
+
+            // 로그인 성공 시 loginResult.jsp로 포워딩
+            response.sendRedirect("loginResult.jsp");
+        } else {
+            response.setContentType("text/html; charset=UTF-8");
+            response.getWriter().println("<script>alert('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.'); location.href='login.html';</script>");
+            response.getWriter().close();
+        }
+        /*DBConnection db = new DBConnection();
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -67,6 +88,6 @@ public class LoginOk extends HttpServlet {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 }

@@ -26,6 +26,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    implementation("com.oracle.database.jdbc:ojdbc8-production:19.9.0.0")
 }
 
 test {
