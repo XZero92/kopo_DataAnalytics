@@ -3,6 +3,16 @@ package com.example.jsp_21_1_ex1_memberex.model;
 import java.time.LocalDate;
 
 public class MemberDTO {
+    // Status 상수
+    public static final String STATUS_INACTIVE = "ST00"; // 요청
+    public static final String STATUS_ACTIVE = "ST01"; // 정상
+    public static final String STATUS_DELETED = "ST02"; // 해지
+    public static final String STATUS_SUSPENDED = "ST03"; // 일시정지
+
+    // UserType 상수
+    public static final String USER_TYPE_MEMBER = "10";
+    public static final String USER_TYPE_ADMIN = "20";
+
     private String userId;
     private String userName;
     private String password;

@@ -1,16 +1,48 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: kopo
-  Date: 25. 4. 30.
-  Time: 오후 2:15
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<!DOCTYPE html>
+<html lang="kr">
 <head>
-    <title>Title</title>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
 </head>
 <body>
+<form action="joinOk" method="post" onsubmit="return checkPasswordMatch();">
+    아이디: <input type="text" name="userId" required><br>
+    비밀번호: <input type="password" id="password" name="password" required><br>
+    비밀번호 확인: <input type="password" id="confirmPassword" name="confirmPassword" required><br>
+    <span id="passwordMessage"></span><br>
+    이름: <input type="text" name="userName" required><br>
+    이메일: <input type="email" name="email" required><br>
+    전화번호: <input type="tel" name="mobile" required><br>
+</form>
+<script>
+    function validateForm() {
+        const inputs = document.querySelectorAll('form input[required]');
+        const submitBtn = document.getElementById('submitBtn');
+        let allFilled = true;
 
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                allFilled = false;
+            }
+        });
+
+        submitBtn.disabled = !allFilled;
+    }
+
+    document.querySelectorAll('form input[required]').forEach(input => {
+        input.addEventListener('input', validateForm);
+    });
+
+    function checkPasswordMatch() {
+        const pw1 = document.getElementById('password').value;
+        const pw2 = document.getElementById('confirmPassword').value;
+        if (pw1 !== pw2) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return false;
+        }
+        return true;
+    }
+</script>
 </body>
 </html>
