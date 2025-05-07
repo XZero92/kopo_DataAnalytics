@@ -1,7 +1,6 @@
 package com.example.jsp_21_1_ex1_memberex.controller;
 
 import com.example.jsp_21_1_ex1_memberex.repository.MemberDAO;
-import com.example.jsp_21_1_ex1_memberex.model.MemberDTO;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,7 +10,7 @@ import jakarta.servlet.ServletException;
 import java.io.IOException;
 
 @WebServlet("/deleteOk")
-public class DeleteOk extends HttpServlet {
+public class DeleteAccountOk extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     
@@ -26,14 +25,11 @@ public class DeleteOk extends HttpServlet {
 
         MemberDAO dao = new MemberDAO();
 
-        if(dao.updateMemberInfo(userId, userName, email, mobileNo)) {
+        if(dao.deleteMember(userId)) {
             request.setAttribute("userId", userId);
-            request.setAttribute("userName", userName);
-            request.setAttribute("email", email);
-            request.setAttribute("mobileNo", mobileNo);
 
             // modifyResult.jsp로 포워딩
-            request.getRequestDispatcher("modifyResult.jsp").forward(request, response);
+            request.getRequestDispatcher("deleteResult.jsp").forward(request, response);
         } else {
         }
     }

@@ -202,11 +202,12 @@ public class MemberDAO {
     }
 
     public boolean deleteMember(String userId) {
-        String query = "DELETE FROM TB_USER WHERE ID_USER = ?";
+        String query = "DELETE FROM TB_USER WHERE ID_USER = ? AND ST_STATUS = ?";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, userId);
+            pstmt.setString(2, MemberDTO.STATUS_DELETED);
 
             int result = pstmt.executeUpdate();
             return result > 0;
