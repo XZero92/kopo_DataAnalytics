@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.example.jsp_21_1_ex1_memberex.model.*" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,9 +18,8 @@
 <a href="login.html">로그인</a>
 <%
     } else {
-        String username = (String) session.getAttribute("username");
 %>
-<h2>환영합니다, <%= username %> 님!</h2>
+<h2>환영합니다, ${sessionScope.userName} 님!</h2>
 <a href="modify.jsp">회원정보 수정</a> |
 <a href="logout.jsp">로그아웃</a> <br/>
 <%

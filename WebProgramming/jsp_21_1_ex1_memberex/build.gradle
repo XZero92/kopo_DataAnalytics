@@ -28,6 +28,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
     // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc11
     implementation("com.oracle.database.jdbc:ojdbc11:23.7.0.25.01")
+    implementation("jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.2")
 }
 
 test {
