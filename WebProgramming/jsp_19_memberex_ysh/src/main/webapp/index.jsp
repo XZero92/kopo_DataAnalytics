@@ -47,8 +47,8 @@
     <c:param name="email" value="hong@example.com"/>
     <c:param name="mobile" value="01000001111"/>
     <c:param name="gender" value="M"/>
-</c:url>--%>
-<a href="${toModifyResult}">회원정보 수정 결과</a>
+</c:url>
+<a href="${toModifyResult}">회원정보 수정 결과</a>--%>
 <%
     session = request.getSession(false);
     String userId = (session != null) ? (String) session.getAttribute("userId") : null;
