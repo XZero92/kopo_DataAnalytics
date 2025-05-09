@@ -16,7 +16,7 @@ public class MBFrontController extends HttpServlet {
     
     @Override
     public void init() throws ServletException {
-        
+
     }*/
     
     @Override
@@ -35,23 +35,31 @@ public class MBFrontController extends HttpServlet {
         String contextPath = request.getContextPath();
         String command = uri.substring(contextPath.length());
 
+        // 뷰 페이지 매핑
         if (command.equals("/list.do")) {
-            viewPage = "list.jsp";
+            cmdObj = new MBListCommand();
+            cmdObj.execute(request, response);
+            viewPage = "/WEB-INF/views/list.jsp";
         } else if (command.equals("/write_view.do")) {
-            viewPage = "write_view.jsp";
+            viewPage = "/WEB-INF/views/write_view.jsp";
         } else if (command.equals("/write.do")) {
-            
-        } else if (command.equals("/modify.do")) {
+            // 글 작성 내용을 DB에 저장하는 요청 (POST 방식)
+            cmdObj = new MBWriteCommand();
+            cmdObj.execute(request, response); // MBWriteCommand는 "viewPage" 속성을 "list.do" 또는 "write_view.jsp"로 설정합니다.
             
         } else if (command.equals("/content_view.do")) {
-            viewPage = "content_view.jsp";
+            // 글 상세보기
+            cmdObj = new MBContentCommand();
+            cmdObj.execute(request, response);
+            viewPage = "/WEB-INF/views/content_view.jsp";
+        } else if (command.equals("/modify.do")) {
+
         } else if (command.equals("/reply.do")) {
 
-        } else if () {
-            
+        } else {
+            // 기본 페이지 (오류 또는 홈)
+            viewPage = "/WEB-INF/views/error.jsp";
         }
-
-
-        request.getRequestDispatcher(viewPage).forward(request, response);
+            request.getRequestDispatcher(viewPage).forward(request, response);
+        }
     }
-}
