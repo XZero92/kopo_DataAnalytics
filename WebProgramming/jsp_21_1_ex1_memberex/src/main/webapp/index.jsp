@@ -1,40 +1,44 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="com.example.jsp_21_1_ex1_memberex.model.*" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>메인 페이지</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 관리 시스템</title>
+    <link rel="stylesheet" href="https://bootswatch.com/5/zephyr/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 20px;
+        }
+    </style>
 </head>
 <body>
-<h1>메인 페이지</h1>
-<%
-    session = request.getSession(false);
-    String userId = (session != null) ? (String) session.getAttribute("userId") : null;
+<div class="container">
+    <header class="pb-3 mb-4 border-bottom">
+        <h1 class="display-6">회원 관리 시스템</h1>
+    </header>
 
-    if (userId == null) {
-%>
-<a href="join.html">회원가입</a> |
-<a href="login.html">로그인</a>
-<%
-    } else {
-%>
-<h2>환영합니다, ${sessionScope.userName} 님!</h2>
-<a href="modify.jsp">회원정보 수정</a> |
-<a href="logout.jsp">로그아웃</a> <br/>
-<%
-        String userType = (String) session.getAttribute("userType");
-        if (userType == MemberDTO.USER_TYPE_ADMIN) {
-            // 관리자 메뉴
-            %>
-            <h3>관리자 메뉴</h3>
-            <a href="adminPage.jsp">관리자 페이지</a> |
-            <a href="userList.jsp">회원 목록</a> |
-            <a href="userModify.jsp">회원 정보 수정</a> |
-            <a href="userDelete.jsp">회원 삭제</a>
-            <%
+    <%
+        session = request.getSession(false);
+        String userId = (session != null) ? (String) session.getAttribute("userId") : null;
+        
+        // 로그인 상태인 경우 main.jsp로 리다이렉트
+        if (userId != null) {
+            response.sendRedirect("main.jsp");
+            return;
         }
-    }
-%>
+    %>
+    
+    <div class="p-5 mb-4 bg-light rounded-3">
+        <div class="container-fluid py-5">
+            <h2 class="display-5 fw-bold">환영합니다</h2>
+            <p class="col-md-8 fs-4">회원 관리 시스템에 오신 것을 환영합니다. 서비스를 이용하려면 로그인하거나 회원가입을 해주세요.</p>
+            <a href="login.jsp" class="btn btn-primary btn-lg me-2">로그인</a>
+            <a href="join.jsp" class="btn btn-secondary btn-lg">회원가입</a>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

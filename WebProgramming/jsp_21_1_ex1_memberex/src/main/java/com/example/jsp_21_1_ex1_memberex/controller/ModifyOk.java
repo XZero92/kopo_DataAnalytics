@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpSession;
+import java.util.regex.Pattern;
 
 import java.io.IOException;
 
@@ -15,69 +17,49 @@ import java.io.IOException;
 public class ModifyOk extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // GET 요청 처리 (필요시)
+        response.sendRedirect("modify.jsp");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-        String userId = request.getParameter("id");
-        String userName = request.getParameter("username");
-        String email = request.getParameter("email");
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        String userId = (String) session.getAttribute("userId");
+        String userName = request.getParameter("userName");
+        String password = request.getParameter("password");
         String mobileNo = request.getParameter("mobileNo");
+
+        // 비밀번호 유효성 검사 (최소 4글자, 영문자+숫자 조합)
+        if (!isValidPassword(password)) {
+            response.setContentType("text/html; charset=UTF-8");
+            response.getWriter().println("<script>alert('비밀번호는 최소 4자 이상의 영문자와 숫자 조합이어야 합니다.'); history.back();</script>");
+            return;
+        }
 
         MemberDAO dao = new MemberDAO();
 
-        if(dao.updateMemberInfo(userId, userName, email, mobileNo)) {
-            request.setAttribute("userId", userId);
-            request.setAttribute("userName", userName);
-            request.setAttribute("email", email);
-            request.setAttribute("mobileNo", mobileNo);
+        if(dao.updateMemberInfo(userId, userName, password, mobileNo)) {
+            // 세션 정보 업데이트
+            session.setAttribute("userName", userName);
 
-            // modifyResult.jsp로 포워딩
-            request.getRequestDispatcher("modifyResult.jsp").forward(request, response);
+            response.setContentType("text/html; charset=UTF-8");
+            response.getWriter().println("<script>alert('회원정보가 성공적으로 수정되었습니다.'); location.href='index.jsp';</script>");
         } else {
-            response.getWriter().println("회원정보 수정 실패");
+            response.setContentType("text/html; charset=UTF-8");
+            response.getWriter().println("<script>alert('회원정보 수정에 실패했습니다.'); location.href='modify.jsp';</script>");
         }
-
-        /*DBConnection db = new DBConnection();
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-
-        String query = "UPDATE member SET username = ?, email = ?, mobile = ?, gender = ? WHERE id = ?";
-
-        try {
-            conn = db.getConnection();
-            pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, username);
-            pstmt.setString(2, email);
-            pstmt.setString(3, mobile);
-            pstmt.setString(4, gender);
-            pstmt.setString(5, id);
-
-            int result = pstmt.executeUpdate();
-            if (result > 0) {
-                request.setAttribute("id", id);
-                request.setAttribute("username", username);
-                request.setAttribute("email", email);
-                request.setAttribute("mobile", mobile);
-                request.setAttribute("gender", gender);
-
-                // modifyResult.jsp로 포워딩
-                request.getRequestDispatcher("modifyResult.jsp").forward(request, response);
-            } else {
-                response.getWriter().println("회원정보 수정 실패");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (pstmt != null) pstmt.close();
-                if (conn != null) conn.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }*/
+    }
+    
+    // 비밀번호 유효성 검사 메서드
+    private boolean isValidPassword(String password) {
+        // 영문자와 숫자 조합으로 최소 4글자 이상
+        String regex = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{4,}$";
+        return Pattern.matches(regex, password);
     }
 }

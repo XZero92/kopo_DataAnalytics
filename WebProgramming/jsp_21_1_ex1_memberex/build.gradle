@@ -26,9 +26,10 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-    // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc11
-    implementation("com.oracle.database.jdbc:ojdbc11:23.7.0.25.01")
-    implementation("jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.2")
+    implementation("com.oracle.database.jdbc:ojdbc11-production:21.1.0.0")
+    implementation("jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0")
+    implementation("org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1")
+    implementation("org.mindrot:jbcrypt:0.4")
 }
 
 test {

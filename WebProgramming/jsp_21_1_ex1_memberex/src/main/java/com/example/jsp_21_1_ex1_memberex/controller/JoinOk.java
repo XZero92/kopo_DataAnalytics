@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
+import java.sql.Timestamp;
+import java.util.regex.Pattern;
 
 import java.io.IOException;
 
@@ -14,7 +16,7 @@ import java.io.IOException;
 public class JoinOk extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        response.sendRedirect("join.jsp");
     }
 
     @Override
@@ -22,78 +24,51 @@ public class JoinOk extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
-        String userId = request.getParameter("id");
-        String userName = request.getParameter("username");
+        String userId = request.getParameter("userId");
+        String userName = request.getParameter("userName");
         String password = request.getParameter("password");
-        String email = request.getParameter("email");
         String mobileNo = request.getParameter("mobileNo");
+        String email = request.getParameter("email");
 
-        MemberDTO member = new MemberDTO(
-                userId,
-                userName,
-                password,
-                email,
-                mobileNo,
-                MemberDTO.USER_TYPE_MEMBER,
-                MemberDTO.STATUS_INACTIVE,
-                null,
-                java.time.LocalDate.now());
+        // 비밀번호 유효성 검사 (최소 4글자, 영문자+숫자 조합)
+        if (!isValidPassword(password)) {
+            response.setContentType("text/html; charset=UTF-8");
+            response.getWriter().println("<script>alert('비밀번호는 최소 4자 이상의 영문자와 숫자 조합이어야 합니다.'); history.back();</script>");
+            return;
+        }
+
+        MemberDTO member = new MemberDTO();
+        member.setUserId(userId);
+        member.setUserName(userName);
+        member.setPassword(password);
+        member.setEncPassword(password); // 실제 구현시 암호화 필요
+        member.setMobileNo(mobileNo);
+        member.setEmail(userId);
+        member.setStatus(MemberDTO.STATUS_INACTIVE); // 가입요청 상태로 시작
+        member.setUserType(MemberDTO.USER_TYPE_MEMBER); // 일반 회원으로 시작
+        member.setRegisterNo(null);
+        member.setFirstDate(new Timestamp(System.currentTimeMillis()));
+
         MemberDAO dao = new MemberDAO();
 
         if(dao.insertMember(member)) {
-            request.setAttribute("id", userId);
-            request.setAttribute("username", userName);
+            request.setAttribute("userId", userId);
+            request.setAttribute("userName", userName);
             request.setAttribute("email", email);
             request.setAttribute("mobileNo", mobileNo);
 
             // joinResult.jsp로 포워딩
-            request.getRequestDispatcher("joinResult.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEF-INF/views/joinResult.jsp").forward(request, response);
         } else {
-            response.getWriter().println("회원가입 실패");
+            response.setContentType("text/html; charset=UTF-8");
+            response.getWriter().println("<script>alert('회원가입에 실패했습니다.'); location.href='join.jsp';</script>");
         }
-
-        /*DBConnection db = new DBConnection();
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        int result = 0;
-
-        String addMemberQuery = "INSERT INTO member (id, paswd, username, email, mobileNo, gender) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
-
-        try {
-            conn = db.getConnection();
-            pstmt = conn.prepareStatement(addMemberQuery);
-            pstmt.setString(1, id);
-            pstmt.setString(2, paswd);
-            pstmt.setString(3, username);
-            pstmt.setString(4, email);
-            pstmt.setString(5, mobileNo);
-            pstmt.setString(6, gender);
-
-            result = pstmt.executeUpdate();
-
-            if (result > 0) {
-                request.setAttribute("id", id);
-                request.setAttribute("username", username);
-                request.setAttribute("email", email);
-                request.setAttribute("mobileNo", mobileNo);
-                request.setAttribute("gender", gender);
-
-                // joinResult.jsp로 포워딩
-                request.getRequestDispatcher("joinResult.jsp").forward(request, response);
-            } else {
-                response.getWriter().println("회원가입 실패");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (pstmt != null) pstmt.close();
-                if (conn != null) conn.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }*/
+    }
+    
+    // 비밀번호 유효성 검사 메서드
+    private boolean isValidPassword(String password) {
+        // 영문자와 숫자 조합으로 최소 4글자 이상
+        String regex = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{4,}$";
+        return Pattern.matches(regex, password);
     }
 }
