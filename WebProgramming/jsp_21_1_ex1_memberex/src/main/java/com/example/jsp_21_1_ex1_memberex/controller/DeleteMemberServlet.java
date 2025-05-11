@@ -31,10 +31,10 @@ public class DeleteMemberServlet extends HttpServlet {
         response.setContentType("text/html; charset=UTF-8");
         if (success) {
             response.getWriter().println("<script>alert('회원이 성공적으로 삭제되었습니다.'); location.href='" + 
-                request.getContextPath() + "/views/admin/userList';</script>");
+                request.getContextPath() + "/admin/userList';</script>");
         } else {
             response.getWriter().println("<script>alert('회원 삭제에 실패했습니다.'); location.href='" + 
-                request.getContextPath() + "/views/admin/userList';</script>");
+                request.getContextPath() + "/admin/userList';</script>");
         }
     }
 }

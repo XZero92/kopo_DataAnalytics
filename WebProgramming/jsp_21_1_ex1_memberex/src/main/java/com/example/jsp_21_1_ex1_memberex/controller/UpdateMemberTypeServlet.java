@@ -31,9 +31,11 @@ public class UpdateMemberTypeServlet extends HttpServlet {
 
         response.setContentType("text/html; charset=UTF-8");
         if (success) {
-            response.getWriter().println("<script>alert('회원 권한이 성공적으로 변경되었습니다.'); location.href='../admin/userList.jsp';</script>");
+            response.getWriter().println("<script>alert('회원 권한이 성공적으로 변경되었습니다.'); location.href='" +
+                    request.getContextPath() + "/admin/userList';</script>");
         } else {
-            response.getWriter().println("<script>alert('회원 권한 변경에 실패했습니다.'); location.href='../admin/userList.jsp';</script>");
+            response.getWriter().println("<script>alert('회원 권한 변경에 실패했습니다.'); location.href='" +
+                    request.getContextPath() + "/admin/userList';</script>");
         }
     }
 }

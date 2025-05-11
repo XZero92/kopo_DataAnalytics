@@ -61,7 +61,7 @@
             <td><%= member.getMobileNo() %></td>
             <td><%= member.getFirstDate() %></td>
             <td>
-              <form action="admin/updateMemberStatus" method="post" class="d-inline">
+              <form action="<%=request.getContextPath()%>/admin/updateMemberStatus" method="post" class="d-inline">
                 <input type="hidden" name="userId" value="<%= member.getUserId() %>">
                 <input type="hidden" name="status" value="<%= MemberDTO.STATUS_ACTIVE %>">
                 <button type="submit" class="btn btn-sm btn-success">복구</button>
@@ -86,7 +86,7 @@
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                  <form action="admin/deleteMember" method="post">
+                  <form action="<%=request.getContextPath()%>/admin/deleteMember" method="post">
                     <input type="hidden" name="userId" value="<%= member.getUserId() %>">
                     <button type="submit" class="btn btn-danger">영구 삭제</button>
                   </form>

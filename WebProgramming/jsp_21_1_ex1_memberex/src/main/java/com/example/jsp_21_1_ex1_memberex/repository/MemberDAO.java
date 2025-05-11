@@ -68,16 +68,24 @@ public boolean insertMember(MemberDTO member) {
 }
 
     public MemberDTO loginMember(String userId, String password) {
-        String query = "SELECT * FROM TB_USER WHERE ID_USER = ? AND NM_PASWD = ?";
+        String query = "SELECT * FROM TB_USER WHERE ID_USER = ?";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, userId);
-            pstmt.setString(2, password);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return extractMemberFromResultSet(rs);
+                    // 암호화 방식: BCrypt 검증 사용
+                    /*String storedHash = rs.getString("NM_ENC_PASWD");
+                    if (BCrypt.checkpw(password, storedHash)) {
+                        return extractMemberFromResultSet(rs);
+                    }*/
+                    // 평문 방식: 단순 문자열 비교
+                    String storedPlainPw = rs.getString("NM_PASWD");
+                    if (password.equals(storedPlainPw)) {
+                        return extractMemberFromResultSet(rs);
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -87,6 +95,8 @@ public boolean insertMember(MemberDTO member) {
     }
 
     public boolean updateMemberInfo(String userId, String userName, String password, String mobileNo) {
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
         String query = "UPDATE TB_USER SET " +
                 "NM_USER = ?, " +
                 "NM_PASWD = ?, " +
@@ -98,12 +108,11 @@ public boolean insertMember(MemberDTO member) {
 
             pstmt.setString(1, userName);
             pstmt.setString(2, password);
-            pstmt.setString(3, password); // 암호화 처리는 생략
+            pstmt.setString(3, hashedPassword);
             pstmt.setString(4, mobileNo);
             pstmt.setString(5, userId);
 
-            int result = pstmt.executeUpdate();
-            return result > 0;
+            return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -112,17 +121,22 @@ public boolean insertMember(MemberDTO member) {
 
     // 비밀번호 확인
     public boolean validatePassword(String userId, String password) {
-        String query = "SELECT COUNT(*) FROM TB_USER WHERE ID_USER = ? AND NM_PASWD = ?";
+        String query = "SELECT NM_PASWD, NM_ENC_PASWD FROM TB_USER WHERE ID_USER = ?\n";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, userId);
-            pstmt.setString(2, password);
             
             try (ResultSet rs = pstmt.executeQuery()) {
-            if (rs.next()) {
-                    return rs.getInt(1) > 0;
-            }
+                if (rs.next()) {
+                    /*// 암호화 방식 검증
+                    String storedHash = rs.getString("NM_ENC_PASWD");
+                    return BCrypt.checkpw(password, storedHash);*/
+
+                    // 평문 방식 검증
+                    String storedPlainPw = rs.getString("NM_PASWD");
+                    return password.equals(storedPlainPw);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

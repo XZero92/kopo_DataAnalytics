@@ -62,12 +62,12 @@
             <td><span class="badge bg-warning">가입요청</span></td>
             <td><%= member.getFirstDate() %></td>
             <td>
-              <form action="admin/updateMemberStatus" method="post" class="d-inline">
+              <form action="<%=request.getContextPath()%>/admin/updateMemberStatus" method="post" class="d-inline">
                 <input type="hidden" name="userId" value="<%= member.getUserId() %>">
                 <input type="hidden" name="status" value="<%= MemberDTO.STATUS_ACTIVE %>">
                 <button type="submit" class="btn btn-sm btn-success">승인</button>
               </form>
-              <form action="admin/updateMemberStatus" method="post" class="d-inline">
+              <form action="<%=request.getContextPath()%>/admin/updateMemberStatus" method="post" class="d-inline">
                 <input type="hidden" name="userId" value="<%= member.getUserId() %>">
                 <input type="hidden" name="status" value="<%= MemberDTO.STATUS_DELETED %>">
                 <button type="submit" class="btn btn-sm btn-danger">거부</button>
