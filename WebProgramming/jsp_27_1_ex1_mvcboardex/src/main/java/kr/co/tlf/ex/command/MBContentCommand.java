@@ -6,7 +6,7 @@ import kr.co.tlf.ex.dao.MBDao;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class MBContentCommand implements MBcommand {
+public class MBContentCommand implements MBCommand {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) {

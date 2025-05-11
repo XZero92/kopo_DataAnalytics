@@ -8,7 +8,7 @@ import kr.co.tlf.ex.dto.MBDto;
 
 import java.util.List;
 
-public class MBListCommand implements MBcommand {
+public class MBListCommand implements MBCommand {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) {

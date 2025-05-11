@@ -7,7 +7,7 @@ public class MBDto {
     private int nbBoard;          // NB_BOARD (NUMBER(9)) - NB_MVC_BOARD 대신 또는 함께 사용
     private String nmTitle;       // NM_TITLE (VARCHAR2(200 BYTE))
     private String nmContent;     // NM_CONTENT (VARCHAR2(4000 BYTE))
-    // private String cbContent;  // CB_CONTENT (CLOB) - 필요시 추가
+    private String cbContent;     // CB_CONTENT (CLOB) - 필요시 추가
     private String nmWriter;      // NM_WRITER (VARCHAR2(50 BYTE))
     private Timestamp daWrite;    // DA_WRITE (DATE)
     private int cnHit;            // CN_HIT (NUMBER(5))
@@ -17,8 +17,6 @@ public class MBDto {
     private String idFile;        // ID_FILE (VARCHAR2(100 BYTE))
     // 필드에 최초 작성일 추가
 	private Timestamp daFirstDate;  // DA_FIRST_DATE (DATE)
-	// 추후 CLOB 사용을 위한 필드 준비
-	// private String cbContent;    // CB_CONTENT (CLOB)
 
     // 기본 생성자
     public MBDto() {
@@ -64,6 +62,10 @@ public class MBDto {
     public void setNmContent(String nmContent) {
         this.nmContent = nmContent;
     }
+
+    public String getCbContent() { return cbContent;}
+
+    public void setCbContent(String cbContent) { this.cbContent = cbContent; }
 
     public String getNmWriter() {
         return nmWriter;

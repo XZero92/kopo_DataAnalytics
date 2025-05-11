@@ -39,15 +39,75 @@ public class MBDao {
     }
 
     /**
-     * 새 게시글을 데이터베이스에 삽입합니다.
-     * NB_BOARD는 시퀀스에서 가져오고, NB_GROUP은 NB_BOARD와 같은 값을 가집니다.
-     * NB_STEP과 NB_INDENT는 0으로 초기화됩니다.
-     * DA_WRITE는 SYSDATE, CN_HIT는 0으로 DB에서 기본 처리됩니다.
-     *
-     * @param dto 저장할 게시글 정보를 담은 MBDto 객체 (nmTitle, nmContent, nmWriter가 채워져 있어야 함)
+     * 특정 게시글의 상세 정보를 조회합니다. (CLOB 데이터 포함)
+     * 조회수는 증가시키지 않고 내용만 가져옵니다.
+     * 
+     * @param nbBoard 조회할 게시글 번호
+     * @return 조회된 게시글 정보를 담은 MBDto 객체, 없으면 null
+     */
+    public MBDto getContent(String nbBoard) {
+        MBDto dto = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        String query = "SELECT NB_BOARD, NM_TITLE, NM_CONTENT, CB_CONTENT, NM_WRITER, " +
+                      "DA_WRITE, DA_FIRST_DATE, CN_HIT, NB_GROUP, NB_STEP, NB_INDENT, ID_FILE " +
+                      "FROM TB_BOARD WHERE NB_BOARD = ?";
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, nbBoard);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                dto = new MBDto();
+                dto.setNbBoard(rs.getInt("NB_BOARD"));
+                dto.setNmTitle(rs.getString("NM_TITLE"));
+                dto.setNmContent(rs.getString("NM_CONTENT"));
+                
+                // CLOB 데이터 처리
+                try {
+                    // Oracle JDBC 드라이버는 rs.getString("CB_CONTENT")로 CLOB을 바로 읽을 수 있습니다
+                    String clobContent = rs.getString("CB_CONTENT");
+                    dto.setCbContent(clobContent);
+                } catch (SQLException e) {
+                    // CLOB 읽기 실패 시 예외 처리
+                    System.err.println("CLOB 읽기 실패: " + e.getMessage());
+                    // CLOB 데이터가 없으면 일반 컨텐츠를 사용
+                    dto.setCbContent(rs.getString("NM_CONTENT"));
+                }
+                
+                dto.setNmWriter(rs.getString("NM_WRITER"));
+                dto.setDaWrite(rs.getTimestamp("DA_WRITE"));
+
+                // 최초 작성일 처리
+                java.sql.Timestamp firstDate = rs.getTimestamp("DA_FIRST_DATE");
+                dto.setDaFirstDate(firstDate);
+
+                dto.setCnHit(rs.getInt("CN_HIT"));
+                dto.setNbGroup(rs.getInt("NB_GROUP"));
+                dto.setNbStep(rs.getInt("NB_STEP"));
+                dto.setNbIndent(rs.getInt("NB_INDENT"));
+                dto.setIdFile(rs.getString("ID_FILE"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, pstmt, rs);
+        }
+
+        return dto;
+    }
+
+    /**
+     * 새 게시글을 데이터베이스에 삽입합니다. (CLOB 데이터 포함)
+     * 
+     * @param dto 저장할 게시글 정보를 담은 MBDto 객체
      * @return 삽입 성공 시 1, 실패 시 0
      */
-    public int insertBoard(MBDto dto) {
+    public int insertPost(MBDto dto) {
         Connection conn = null;
         PreparedStatement pstmtSeq = null;
         PreparedStatement pstmtInsert = null;
@@ -57,48 +117,55 @@ public class MBDao {
 
         String sqlSeq = "SELECT seq_tb_board.NEXTVAL FROM DUAL";
         String sqlInsert = "INSERT INTO TB_BOARD " +
-                "(NB_BOARD, NM_TITLE, NM_CONTENT, NM_WRITER, " +
-                "NB_GROUP, NB_STEP, NB_INDENT, ID_FILE, DA_WRITE, CN_HIT, DA_FIRST_DATE) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, 0, SYSDATE)";
+            "(NB_BOARD, NM_TITLE, NM_CONTENT, CB_CONTENT, NM_WRITER, " +
+            "NB_GROUP, NB_STEP, NB_INDENT, ID_FILE, DA_WRITE, CN_HIT, DA_FIRST_DATE) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, 0, SYSDATE)";
 
         try {
-            conn = getConnection(); // 실제 DB 연결 메소드 호출
+            conn = getConnection();
             if (conn == null) {
                 System.err.println("DB Connection is null in insertBoard.");
                 return 0;
             }
             conn.setAutoCommit(false); // 트랜잭션 시작
 
-            // 1. 시퀀스로부터 NB_BOARD 값 가져오기
-            pstmtSeq = conn.prepareStatement(sqlSeq);
-            rsSeq = pstmtSeq.executeQuery();
-            if (rsSeq.next()) {
-                generatedNbBoard = rsSeq.getInt(1);
-            } else {
-                throw new SQLException("Failed to get sequence value.");
-            }
+        // 1. 시퀀스로부터 NB_BOARD 값 가져오기
+        pstmtSeq = conn.prepareStatement(sqlSeq);
+        rsSeq = pstmtSeq.executeQuery();
+        if (rsSeq.next()) {
+            generatedNbBoard = rsSeq.getInt(1);
+        } else {
+            throw new SQLException("Failed to get sequence value.");
+        }
 
-            // 2. DTO에 NB_BOARD 및 관련 값 설정
-            dto.setNbBoard(generatedNbBoard);
-            dto.setNbGroup(generatedNbBoard); // 새 글이므로 NB_GROUP은 NB_BOARD와 동일
-            dto.setNbStep(0);                 // 새 글이므로 NB_STEP은 0
-            dto.setNbIndent(0);               // 새 글이므로 NB_INDENT는 0
-            // dto.setIdFile(null); // Command에서 설정하거나, 기본값이 null이면 생략 가능
+        // 2. DTO에 NB_BOARD 및 관련 값 설정
+        dto.setNbBoard(generatedNbBoard);
+        dto.setNbGroup(generatedNbBoard); // 새 글이므로 NB_GROUP은 NB_BOARD와 동일
+        dto.setNbStep(0);                 // 새 글이므로 NB_STEP은 0
+        dto.setNbIndent(0);               // 새 글이므로 NB_INDENT는 0
 
-            // 3. 게시글 삽입
-            pstmtInsert = conn.prepareStatement(sqlInsert);
-            pstmtInsert.setInt(1, dto.getNbBoard());
-            pstmtInsert.setString(2, dto.getNmTitle());
-            pstmtInsert.setString(3, dto.getNmContent());
-            pstmtInsert.setString(4, dto.getNmWriter());
-            pstmtInsert.setInt(5, dto.getNbGroup());
-            pstmtInsert.setInt(6, dto.getNbStep());
-            pstmtInsert.setInt(7, dto.getNbIndent());
-            pstmtInsert.setString(8, dto.getIdFile()); // 향후 파일 첨부 시 사용, 현재는 null
+        // 3. 게시글 삽입 (CLOB 포함)
+        pstmtInsert = conn.prepareStatement(sqlInsert);
+        pstmtInsert.setInt(1, dto.getNbBoard());
+        pstmtInsert.setString(2, dto.getNmTitle());
+        pstmtInsert.setString(3, dto.getNmContent());
+        
+        // CLOB 데이터 설정 - 없으면 일반 내용으로 대체
+        String clobContent = dto.getCbContent();
+        if (clobContent == null || clobContent.isEmpty()) {
+            clobContent = dto.getNmContent(); // 기본적으로 일반 컨텐츠와 동일하게 설정
+        }
+        pstmtInsert.setString(4, clobContent);
+        
+        pstmtInsert.setString(5, dto.getNmWriter());
+        pstmtInsert.setInt(6, dto.getNbGroup());
+        pstmtInsert.setInt(7, dto.getNbStep());
+        pstmtInsert.setInt(8, dto.getNbIndent());
+        pstmtInsert.setString(9, dto.getIdFile()); // 향후 파일 첨부 시 사용, 현재는 null
 
-            result = pstmtInsert.executeUpdate();
+        result = pstmtInsert.executeUpdate();
 
-            conn.commit(); // 트랜잭션 커밋
+        conn.commit(); // 트랜잭션 커밋
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -125,6 +192,7 @@ public class MBDao {
         }
         return result; // 성공 시 1 (삽입된 행 수), 실패 시 0
     }
+
 
     // 전체 게시글 수 조회
     public int getTotalCount() {
@@ -194,16 +262,44 @@ public class MBDao {
         return boardList;
     }
 
-    // 조회수 증가
-    public void updateHitCount(int nbBoard) {
+    /**
+     * 게시글 조회 시 조회수를 증가시키는 메소드
+     *
+     * @param nbBoard 조회수를 증가시킬 게시글 번호
+     * @return 성공 시 1, 실패 시 0
+     */
+    public int updateHit(String nbBoard) {
         Connection conn = null;
         PreparedStatement pstmt = null;
+        int result = 0;
+
         String query = "UPDATE TB_BOARD SET CN_HIT = CN_HIT + 1 WHERE NB_BOARD = ?";
 
         try {
             conn = getConnection();
             pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, nbBoard);
+            pstmt.setString(1, nbBoard);
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, pstmt, null);
+        }
+
+        return result;
+    }
+    // 1. 같은 그룹 내 현재 step보다 큰 글들의 step 증가
+    public void updateStep(int nbGroup, int nbStep) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        String query = "UPDATE TB_BOARD SET NB_STEP = NB_STEP + 1 "
+                     + "WHERE NB_GROUP = ? AND NB_STEP > ?";
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, nbGroup);
+            pstmt.setInt(2, nbStep);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -213,144 +309,112 @@ public class MBDao {
     }
 
     /**
-     * 특정 게시글의 상세 정보를 조회합니다.
-     * 조회수는 증가시키지 않고 내용만 가져옵니다.
-     * 
-     * @param nbBoard 조회할 게시글 번호
-     * @return 조회된 게시글 정보를 담은 MBDto 객체, 없으면 null
+     * 특정 게시글의 제목과 내용을 수정합니다. (CLOB 데이터 포함)
+     * 게시글 수정 시 작성일(DA_WRITE)도 현재 시간으로 업데이트됩니다.
+     *
+     * @param nbBoard 수정할 게시글 번호
+     * @param title 수정할 제목
+     * @param content 수정할 내용
+     * @return 수정 성공 시 1, 실패 시 0
      */
-public MBDto getContent(String nbBoard) {
-    MBDto dto = null;
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
+    public int modifyPost(String nbBoard, String title, String content) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        int result = 0;
 
-    String query = "SELECT NB_BOARD, NM_TITLE, NM_CONTENT, CB_CONTENT, NM_WRITER, " +
-                  "DA_WRITE, DA_FIRST_DATE, CN_HIT, NB_GROUP, NB_STEP, NB_INDENT, ID_FILE " +
-                  "FROM TB_BOARD WHERE NB_BOARD = ?";
+        // 제목, 내용(일반 컨텐츠 및 CLOB), 작성일 업데이트 (최초작성일은 변경하지 않음)
+        String query = "UPDATE TB_BOARD SET NM_TITLE = ?, NM_CONTENT = ?, CB_CONTENT = ?, DA_WRITE = SYSDATE "
+            + "WHERE NB_BOARD = ?";
 
-    try {
-        conn = getConnection();
-        pstmt = conn.prepareStatement(query);
-        pstmt.setString(1, nbBoard);
-        rs = pstmt.executeQuery();
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, title);
+            pstmt.setString(2, content);
+            pstmt.setString(3, content); // CLOB 필드도 동일한 내용으로 업데이트
+            pstmt.setString(4, nbBoard);
 
-        if (rs.next()) {
-            dto = new MBDto();
-            dto.setNbBoard(rs.getInt("NB_BOARD"));
-            dto.setNmTitle(rs.getString("NM_TITLE"));
-            dto.setNmContent(rs.getString("NM_CONTENT"));
-            // CLOB 데이터 처리를 위한 코드 - 추후 구현
-            // Clob clob = rs.getClob("CB_CONTENT");
-            // String cbContent = null;
-            // if (clob != null) {
-            //     cbContent = clob.getSubString(1, (int) clob.length());
-            //     dto.setCbContent(cbContent);
-            // }
-            dto.setNmWriter(rs.getString("NM_WRITER"));
-            dto.setDaWrite(rs.getTimestamp("DA_WRITE"));
-            
-            // 최초 작성일 처리
-            java.sql.Date firstDate = rs.getDate("DA_FIRST_DATE");
-            if (firstDate != null) {
-                dto.setDaFirstDate(new java.sql.Timestamp(firstDate.getTime()));
-            }
-            
-            dto.setCnHit(rs.getInt("CN_HIT"));
-            dto.setNbGroup(rs.getInt("NB_GROUP"));
-            dto.setNbStep(rs.getInt("NB_STEP"));
-            dto.setNbIndent(rs.getInt("NB_INDENT"));
-            dto.setIdFile(rs.getString("ID_FILE"));
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, pstmt, null);
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    } finally {
-        closeResources(conn, pstmt, rs);
+
+        return result;
     }
 
-    return dto;
-}
+    /**
+     * 답글을 삽입합니다. (CLOB 데이터 포함)
+     */
+    public int insertReply(MBDto dto) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        int result = 0;
 
-/**
- * 게시글 조회 시 조회수를 증가시키는 메소드
- * 
- * @param nbBoard 조회수를 증가시킬 게시글 번호
- * @return 성공 시 1, 실패 시 0
- */
-public int updateHit(String nbBoard) {
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    int result = 0;
+        String query = "INSERT INTO TB_BOARD "
+                 + "(NB_BOARD, NM_TITLE, NM_CONTENT, CB_CONTENT, NM_WRITER, DA_WRITE, CN_HIT, "
+                 + "NB_GROUP, NB_STEP, NB_INDENT, ID_FILE, DA_FIRST_DATE) "
+                 + "VALUES (SEQ_TB_BOARD.NEXTVAL, ?, ?, ?, ?, SYSDATE, 0, ?, ?, ?, ?, SYSDATE)";
 
-    String query = "UPDATE TB_BOARD SET CN_HIT = CN_HIT + 1 WHERE NB_BOARD = ?";
+        try {
+            conn = getConnection();
 
-    try {
-        conn = getConnection();
-        pstmt = conn.prepareStatement(query);
-        pstmt.setString(1, nbBoard);
-        result = pstmt.executeUpdate();
-    } catch (SQLException e) {
-        e.printStackTrace();
-    } finally {
-        closeResources(conn, pstmt, null);
-    }
+            // 1. 같은 그룹 내 기존 답글들의 STEP 증가
+            updateStep(dto.getNbGroup(), dto.getNbStep());
 
-    return result;
-}
-// 1. 같은 그룹 내 현재 step보다 큰 글들의 step 증가
-public void updateStep(int nbGroup, int nbStep) {
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    String query = "UPDATE TB_BOARD SET NB_STEP = NB_STEP + 1 "
-                 + "WHERE NB_GROUP = ? AND NB_STEP > ?";
-    
-    try {
-        conn = getConnection();
-        pstmt = conn.prepareStatement(query);
-        pstmt.setInt(1, nbGroup);
-        pstmt.setInt(2, nbStep);
-        pstmt.executeUpdate();
-    } catch (SQLException e) {
-        e.printStackTrace();
-    } finally {
-        closeResources(conn, pstmt, null);
-    }
-}
-
-// 2. 답글 삽입
-public int insertReply(MBDto dto) {
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    int result = 0;
-    
-    String query = "INSERT INTO TB_BOARD "
-                 + "(NB_BOARD, NM_TITLE, NM_CONTENT, NM_WRITER, DA_WRITE, CN_HIT, "
-                 + "NB_GROUP, NB_STEP, NB_INDENT, ID_FILE) "
-                 + "VALUES (SEQ_TB_BOARD.NEXTVAL, ?, ?, ?, SYSDATE, 0, ?, ?, ?, ?)";
-    
-    try {
-        conn = getConnection();
+            // 2. 새 답글 삽입
+            pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, dto.getNmTitle());
+            pstmt.setString(2, dto.getNmContent());
         
-        // 1. 같은 그룹 내 기존 답글들의 STEP 증가
-        updateStep(dto.getNbGroup(), dto.getNbStep());
+            // CLOB 데이터 설정
+            String clobContent = dto.getCbContent();
+            if (clobContent == null || clobContent.isEmpty()) {
+                clobContent = dto.getNmContent();
+            }
+            pstmt.setString(3, clobContent);
         
-        // 2. 새 답글 삽입
-        pstmt = conn.prepareStatement(query);
-        pstmt.setString(1, dto.getNmTitle());
-        pstmt.setString(2, dto.getNmContent());
-        pstmt.setString(3, dto.getNmWriter());
-        pstmt.setInt(4, dto.getNbGroup());    // 원글과 동일한 그룹
-        pstmt.setInt(5, dto.getNbStep() + 1); // 부모글의 step + 1
-        pstmt.setInt(6, dto.getNbIndent() + 1); // 부모글의 indent + 1
-        pstmt.setString(7, dto.getIdFile());
-        
-        result = pstmt.executeUpdate();
-    } catch (SQLException e) {
-        e.printStackTrace();
-    } finally {
-        closeResources(conn, pstmt, null);
+            pstmt.setString(4, dto.getNmWriter());
+            pstmt.setInt(5, dto.getNbGroup());     // 원글과 동일한 그룹
+            pstmt.setInt(6, dto.getNbStep() + 1);  // 부모글의 step + 1
+            pstmt.setInt(7, dto.getNbIndent() + 1); // 부모글의 indent + 1
+            pstmt.setString(8, dto.getIdFile());
+
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, pstmt, null);
+        }
+
+        return result;
     }
-    
-    return result;
-}
+    /**
+     * 특정 게시글을 삭제합니다.
+     *
+     * @param nbBoard 삭제할 게시글 번호
+     * @return 삭제 성공 시 1, 실패 시 0
+     */
+    public int deletePost(String nbBoard) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        int result = 0;
+
+        String query = "DELETE FROM TB_BOARD WHERE NB_BOARD = ?";
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, nbBoard);
+            
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, pstmt, null);
+        }
+
+        return result;
+    }
 }

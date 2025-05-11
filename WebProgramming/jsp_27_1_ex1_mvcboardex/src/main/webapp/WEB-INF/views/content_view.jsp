@@ -19,6 +19,7 @@
             border-radius: 5px;
             margin-bottom: 20px;
             white-space: pre-wrap; /* 줄바꿈 보존 */
+            text-align: left; /* 텍스트 왼쪽 정렬 명시적 설정 */
         }
         .date-info {
             font-size: 0.85rem;
@@ -61,18 +62,16 @@
             </div>
             
             <!-- 게시글 내용 -->
-            <div class="content-area">
-                ${content_view.nmContent}
-                <%-- CLOB 필드를 사용할 경우 아래 주석 해제
-                <c:choose>
-                    <c:when test="${not empty content_view.cbContent}">
-                        ${content_view.cbContent}
-                    </c:when>
-                    <c:otherwise>
-                        ${content_view.nmContent}
-                    </c:otherwise>
-                </c:choose>
-                --%>
+            <div class="content-area"><%--
+                --%><c:choose><%--
+                    --%><c:when test="${not empty content_view.cbContent}"><%--
+                        --%>${content_view.cbContent}<%--
+                    --%></c:when><%--
+                    --%><c:otherwise><%--
+                        --%><c:out value="${content_view.nmContent}"/><%--
+                    --%></c:otherwise><%--
+                --%></c:choose><%--
+            --%>
             </div>
             
             <!-- 첨부 파일 표시 (있는 경우) -->

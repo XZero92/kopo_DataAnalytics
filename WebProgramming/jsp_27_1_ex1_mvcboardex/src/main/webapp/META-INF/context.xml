@@ -4,7 +4,7 @@
               auth="Container"
               type="javax.sql.DataSource"
               driverClassName="oracle.jdbc.driver.OracleDriver"
-              url="jdbc:oracle:thin:@dinkdb_medium?TNS_ADMIN=C://Users/kopo/Downloads/Wallet_DinkDB"
+              url="jdbc:oracle:thin:@dinkdb_medium?TNS_ADMIN=C://Oracle/Wallet_DinkDB"
               username="DA2509"
               password="Data2509"
               maxActive="10"

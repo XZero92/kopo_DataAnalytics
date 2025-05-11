@@ -43,12 +43,12 @@
                     <tr>
                         <th scope="row">${board.nbBoard}</th>
                         <td>
-                            <!-- 들여쓰기 처리 -->
+                            <!-- 들여쓰기 처리 수정 -->
                             <c:if test="${board.nbIndent > 0}">
-                                <c:forEach begin="1" end="${board.nbIndent}">
+                                <!-- indent 레벨에 따라 직접 계산된 마진 적용 -->
+                                <span style="margin-left: ${(board.nbIndent-1) * 20}px">
                                     <span class="indent"></span>
-                                </c:forEach>
-                                <span class="badge bg-secondary">RE:</span>
+                                </span>
                             </c:if>
                             <!-- 제목 링크 -->
                             <a href="content_view.do?nbBoard=${board.nbBoard}&page=${currentPage}" class="text-decoration-none">
