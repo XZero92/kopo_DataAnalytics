@@ -3,6 +3,7 @@ package kr.co.tlf.ex.jsp_final_ecommerce_ysh.dto;
 import java.sql.Timestamp;
 
 public class BasketDTO {
+    // TB_BASKET
     private int basketId; // NB_BASKET
     private String userId; // ID_USER
     private int basketAmount; // QT_BASKET_AMOUNT

@@ -13,6 +13,7 @@ public class UserDTO {
     public static final String USER_TYPE_MEMBER = "10";
     public static final String USER_TYPE_ADMIN = "20";
 
+    // TB_USER
     private String userId;      // ID_USER (이메일 형식)
     private String userName;    // NM_USER
     private String password;    // NM_PASWD

@@ -3,6 +3,7 @@ package kr.co.tlf.ex.jsp_final_ecommerce_ysh.dto;
 import java.sql.Timestamp;
 
 public class CategoryProductMappingDTO {
+    // TB_CATEGORY_PRODUCT_MAPPING
     private int categoryNo; // NB_CATEGORY
     private String productNo; // NO_PRODUCT
     private int order; // CN_ORDER

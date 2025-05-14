@@ -16,4 +16,9 @@
         url="jdbc:oracle:thin:@dinkdb_medium?TNS_ADMIN=C://Oracle/Wallet_DinkDB"
         username="DA2509"
         password="Data2509"
+
+        VMware DB URL
+        url="jdbc:oracle:thin:@//192.168.217.244:1521/dinkdb"
+        username="scott"
+        password="tiger"
         -->

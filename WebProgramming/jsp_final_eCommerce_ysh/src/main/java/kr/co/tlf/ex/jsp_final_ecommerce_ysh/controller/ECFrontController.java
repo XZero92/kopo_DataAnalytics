@@ -6,9 +6,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller.commands.*;
+import kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller.commands.user.*;
 import kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller.commands.admin.*;
 import kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller.commands.admin.user.*;
-import kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller.commands.user.*;
+import kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller.commands.admin.category.*;
+import kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller.commands.admin.product.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,24 +33,25 @@ public class ECFrontController extends HttpServlet {
     @Override
     public void init() throws ServletException {
 
+        // 메인 페이지
+        commandMap.put("/main.do", new ECMainCommand());
+
         // 기존 매핑
         commandMap.put("/register.do", new ECRegisterCommand());
         commandMap.put("/login.do", new ECLoginCommand());
         commandMap.put("/logout.do", new ECLogoutCommand());
         commandMap.put("/unregister.do", new ECUnregisterCommand());
 
-        // 메인 페이지 매핑 추가
-        commandMap.put("/main.do", new ECMainCommand());
-
-        // 마이페이지 관련 매핑 추가
+        // 마이페이지
         commandMap.put("/mypage.do", new ECMyPageCommand());
         commandMap.put("/update_profile.do", new ECUpdateProfileCommand());
         commandMap.put("/change_password.do", new ECChangePasswordCommand());
         /*commandMap.put("/order_history.do", new ECOrderHistoryCommand());*/
         commandMap.put("/unregister.do", new ECUnregisterCommand());
 
-        // 관리자 페이지 관련 매핑 추가
+        // 관리자 페이지
         commandMap.put("/adminPage.do", new ECAdminPageCommand());
+        // 사용자 관리
         commandMap.put("/manage_users.do", new ECManageUsersCommand());
         commandMap.put("/approve_user.do", new ECApproveUserCommand());
         commandMap.put("/reject_user.do", new ECRejectUserCommand());
@@ -56,6 +59,17 @@ public class ECFrontController extends HttpServlet {
         commandMap.put("/edit_user.do", new ECEditUserCommand());
         commandMap.put("/update_user_status.do", new ECUpdateUserStatusCommand());
         commandMap.put("/update_user_type.do", new ECUpdateUserTypeCommand());
+        // 카테고리 관리
+        commandMap.put("/manage_categories.do", new ECManageCategoriesCommand());
+        commandMap.put("/add_category.do", new ECAddCategoryCommand());
+        commandMap.put("/update_category.do", new ECUpdateCategoryCommand());
+        commandMap.put("/delete_category.do", new ECDeleteCategoryCommand());
+        // 상품 관리
+        commandMap.put("/manage_products.do", new ECManageProductsCommand());
+        commandMap.put("/add_product.do", new ECAddProductCommand());
+        commandMap.put("/update_product.do", new ECUpdateProductCommand());
+        commandMap.put("/delete_product.do", new ECDeleteProductCommand());
+
     }
     
     /**

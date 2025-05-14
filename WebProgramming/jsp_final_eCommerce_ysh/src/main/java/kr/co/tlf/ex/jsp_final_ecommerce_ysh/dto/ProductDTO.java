@@ -3,19 +3,19 @@ package kr.co.tlf.ex.jsp_final_ecommerce_ysh.dto;
 import java.sql.Timestamp;
 
 public class ProductDTO {
-
-    private String productNo;
-    private String productName;
-    private String detailExplain;
-    private String fileId;
-    private String startDate;
-    private String endDate;
-    private int customerQuantity;
-    private int salePrice;
-    private int stockQuantity;
-    private int deliveryFee;
-    private String registerNo;
-    private Timestamp firstDate;
+    // TB_PRODUCT
+    private String productNo;   // NO_PRODUCT
+    private String productName; // NM_PRODUCT
+    private String detailExplain; // NM_DETAIL_EXPLAIN
+    private String fileId; // ID_FILE
+    private String startDate; // DT_START_DATE
+    private String endDate; // DT_END_DATE
+    private int customerQuantity; // QT_CUSTOMER
+    private int salePrice;  // QT_SALE_PRICE
+    private int stockQuantity;  // QT_STOCK
+    private int deliveryFee; // QT_DELIVERY_FEE
+    private String registerNo;  // NO_REGISTER
+    private Timestamp firstDate;    // DA_FIRST_DATE
 
     public String getProductNo() {
         return productNo;

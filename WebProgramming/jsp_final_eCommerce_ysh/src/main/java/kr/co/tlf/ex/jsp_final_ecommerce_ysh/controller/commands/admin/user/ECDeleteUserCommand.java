@@ -8,9 +8,12 @@ import kr.co.tlf.ex.jsp_final_ecommerce_ysh.dao.UserDAO;
 public class ECDeleteUserCommand implements ECCommand {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) {
-        String userId = request.getParameter("userId");
-        UserDAO userDAO = new UserDAO();
-        userDAO.deleteUser(userId);
-        response.sendRedirect("manage_users.do");
-    }
+        try {
+            String userId = request.getParameter("userId");
+            UserDAO userDAO = new UserDAO();
+            userDAO.deleteUser(userId);
+            response.sendRedirect("manage_users.do");
+        } catch (Exception e) {
+            e.printStackTrace();}
+        }
 }

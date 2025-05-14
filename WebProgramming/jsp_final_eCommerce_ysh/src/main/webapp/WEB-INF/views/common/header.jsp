@@ -28,7 +28,7 @@
                     <span class="me-3">${sessionScope.loginUser.userName}님 환영합니다</span>
                     <a href="mypage.do" class="btn btn-outline-primary me-2">마이페이지</a>
                     <c:if test="${sessionScope.loginUser.userType == '20'}">
-                        <a href="admin.do" class="btn btn-warning me-2">관리자 메뉴</a>
+                        <a href="adminPage.do" class="btn btn-warning me-2">관리자 메뉴</a>
                     </c:if>
                     <a href="logout.do" class="btn btn-primary">로그아웃</a>
                 </c:otherwise>

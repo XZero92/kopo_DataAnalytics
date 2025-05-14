@@ -4,6 +4,7 @@ import java.sql.Blob;
 import java.sql.Timestamp;
 
 public class ContentDTO {
+    // TB_CONTENT
     private String fileId; // ID_FILE
     private String originalFileName; // NM_ORG_FILE
     private String savedFileName; // NM_SAVE_FILE
@@ -11,8 +12,8 @@ public class ContentDTO {
     private Blob savedFile; // BO_SAVE_FILE
     private String fileExtension; // NM_FILE_EXT
     private String fileTypeCode; // CD_FILE_TYPE
-    private Timestamp saveDate; // DA_SAVE
-    private int hitCount; // CN_HIT
+    private Timestamp saveDate; // DA_SAVE, DEFAULT SYSDATE
+    private int hitCount; // CN_HIT, DEFAULT 0
     private String serviceId; // ID_SERVICE
     private String originalFileId; // ID_ORG_FILE
     private String registerNo; // NO_REGISTER

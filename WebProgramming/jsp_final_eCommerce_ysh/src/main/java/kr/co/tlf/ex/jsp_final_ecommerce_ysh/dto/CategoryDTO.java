@@ -3,7 +3,7 @@ package kr.co.tlf.ex.jsp_final_ecommerce_ysh.dto;
 import java.sql.Timestamp;
 
 public class CategoryDTO {
-
+    // TB_CATEGORY
     private int categoryNo; // NB_CATEGORY
     private int parentCategoryNo; // NB_PARENT_CATEGORY
     private String categoryName; // NM_CATEGORY

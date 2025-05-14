@@ -3,7 +3,14 @@ package kr.co.tlf.ex.jsp_final_ecommerce_ysh.dto;
 import java.sql.Timestamp;
 
 public class OrderDTO {
+    // 주문 구분 상수
+    public static final String ORDER_TYPE_ORDER = "10"; // 일반 주문
+    // 주문 상태 상수
+    public static final String ORDER_STATUS_DONE = "10"; // 주문 완료
+    // 결제 상태 상수
+    public static final String PAYMENT_STATUS_DONE = "20"; // 결제 완료
 
+    // TB_ORDER
     private String orderId; // ID_ORDER
     private String userId; // ID_USER
     private int orderAmount; // QT_ORDER_AMOUNT
