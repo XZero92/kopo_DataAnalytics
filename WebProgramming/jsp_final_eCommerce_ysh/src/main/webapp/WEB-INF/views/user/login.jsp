@@ -27,7 +27,7 @@
             <!-- 회원가입 성공 메시지 -->
             <c:if test="${param.registered == 'true'}">
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <strong>회원가입 성공!</strong> 이제 로그인하여 서비스를 이용하실 수 있습니다.
+                    <strong>회원가입 요청 완료.</strong> 관리자가 가입을 승인한 뒤에 로그인하실 수 있습니다.
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </c:if>

@@ -93,9 +93,14 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="section-title">카테고리 목록</h4>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                            <i class="bi bi-plus"></i> 새 카테고리 추가
-                        </button>
+                        <div class="ms-auto">
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#updateOrderModal">
+                                카테고리 순서 변경
+                            </button>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                                <i class="bi bi-plus"></i> 새 카테고리 추가
+                            </button>
+                        </div>
                     </div>
                     
                     <!-- 카테고리 트리 목록 -->
@@ -140,14 +145,14 @@
                                                         onclick="editCategory(${subCategory.categoryNo}, '${subCategory.categoryName}', '${subCategory.explain}', '${subCategory.useYn}')">
                                                         수정
                                                     </button>
-                                                    <button class="btn btn-sm btn-outline-danger" 
+                                                    <button class="btn btn-sm btn-outline-danger"
                                                         onclick="deleteCategory(${subCategory.categoryNo}, '${subCategory.categoryName}')">
                                                         삭제
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- 레벨 3 카테고리 -->
                                         <c:forEach var="level3Category" items="${categories}">
                                             <c:if test="${level3Category.parentCategoryNo == subCategory.categoryNo}">
@@ -160,11 +165,11 @@
                                                             </c:if>
                                                         </span>
                                                         <div class="btn-group">
-                                                            <button class="btn btn-sm btn-outline-primary" 
+                                                            <button class="btn btn-sm btn-outline-primary"
                                                                 onclick="editCategory(${level3Category.categoryNo}, '${level3Category.categoryName}', '${level3Category.explain}', '${level3Category.useYn}')">
                                                                 수정
                                                             </button>
-                                                            <button class="btn btn-sm btn-outline-danger" 
+                                                            <button class="btn btn-sm btn-outline-danger"
                                                                 onclick="deleteCategory(${level3Category.categoryNo}, '${level3Category.categoryName}')">
                                                                 삭제
                                                             </button>
@@ -260,6 +265,72 @@
     </div>
 </div>
 
+<!-- 카테고리 순서 변경 모달 -->
+<div class="modal fade" id="updateOrderModal" tabindex="-1" aria-labelledby="updateOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="update_category_order.do" method="post" id="orderForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateOrderModalLabel">카테고리 순서 변경</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered" id="orderTable">
+                        <thead>
+                        <tr>
+                            <th>카테고리 번호</th>
+                            <th>카테고리 명</th>
+                            <th>순서 변경</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach var="cat" items="${categories}">
+                            <c:if test="${cat.level == 1}">
+                                <tr data-level="${cat.level}">
+                                    <td>
+                                            ${cat.categoryNo}
+                                        <input type="hidden" name="categoryId" value="${cat.categoryNo}">
+                                    </td>
+                                    <td>${cat.fullCategoryName}</td>
+                                    <td>
+                                        <input type="text" name="order" value="${cat.order}" size="3" readonly>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="moveUp(this)">▲</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="moveDown(this)">▼</button>
+                                    </td>
+                                </tr>
+                                <!-- 하위 카테고리 반복 (동일 로직, 레벨에 따라 indent 처리) -->
+                                <c:forEach var="sub" items="${categories}">
+                                    <c:if test="${sub.parentCategoryNo == cat.categoryNo}">
+                                        <tr data-level="${sub.level}">
+                                            <td>
+                                                    ${sub.categoryNo}
+                                                <input type="hidden" name="categoryId" value="${sub.categoryNo}">
+                                            </td>
+                                            <td style="padding-left: 20px;">${sub.fullCategoryName}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="moveUp(this)">▲</button>
+                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="moveDown(this)">▼</button>
+                                            </td>
+                                        </tr>
+                                    </c:if>
+                                </c:forEach>
+                            </c:if>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                    <small class="text-muted">동일 레벨 내에서만 순서가 변경됩니다.</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="submit" class="btn btn-primary">순서 변경 확인</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- 카테고리 삭제 확인 모달 -->
 <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -293,17 +364,44 @@
         document.getElementById('editCategoryName').value = categoryName;
         document.getElementById('editExplanation').value = explanation || '';
         document.getElementById('editUseYn').checked = useYn === 'Y';
-        
+
         // 모달 열기
         new bootstrap.Modal(document.getElementById('editCategoryModal')).show();
     }
-    
+
     function deleteCategory(categoryId, categoryName) {
         document.getElementById('deleteCategoryId').value = categoryId;
         document.getElementById('deleteCategoryName').textContent = categoryName;
-        
+
         // 모달 열기
         new bootstrap.Modal(document.getElementById('deleteCategoryModal')).show();
+    }
+
+    function moveUp(btn) {
+        var row = btn.closest("tr");
+        var prev = row.previousElementSibling;
+        if (prev && prev.getAttribute("data-level") === row.getAttribute("data-level")) {
+            swapRowValues(row, prev);
+            row.parentNode.insertBefore(row, prev);
+        }
+    }
+
+    function moveDown(btn) {
+        var row = btn.closest("tr");
+        var next = row.nextElementSibling;
+        if (next && next.getAttribute("data-level") === row.getAttribute("data-level")) {
+            swapRowValues(row, next);
+            row.parentNode.insertBefore(next, row);
+        }
+    }
+
+    function swapRowValues(row1, row2) {
+        var order1 = row1.querySelector("input[name='order']");
+        var order2 = row2.querySelector("input[name='order']");
+        // 스왑 처리를 위해 두 값을 임시로 교환
+        var temp = order1.value;
+        order1.value = order2.value;
+        order2.value = temp;
     }
 </script>
 </body>

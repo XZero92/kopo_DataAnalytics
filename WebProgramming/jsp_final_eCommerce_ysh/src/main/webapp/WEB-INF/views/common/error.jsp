@@ -27,7 +27,7 @@
                             %>
                         </p>
                         <hr>
-                        <a href="index.do" class="btn btn-primary">홈으로 돌아가기</a>
+                        <a href="main.do" class="btn btn-primary">홈으로 돌아가기</a>
                     </div>
                 </div>
             </div>

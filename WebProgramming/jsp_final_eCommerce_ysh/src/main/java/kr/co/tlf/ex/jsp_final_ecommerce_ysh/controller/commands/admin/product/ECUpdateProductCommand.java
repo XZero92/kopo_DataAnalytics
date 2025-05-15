@@ -39,10 +39,11 @@ public class ECUpdateProductCommand implements ECCommand {
             
             // 필수 파라미터 검증
             if (productNo == null || productNo.isEmpty() ||
-                productName == null || productName.isEmpty() || 
+                productName == null || productName.isEmpty() ||
+                customerQuantityStr == null || customerQuantityStr.isEmpty() ||
                 salePriceStr == null || salePriceStr.isEmpty() ||
                 stockQuantityStr == null || stockQuantityStr.isEmpty()) {
-                request.getSession().setAttribute("errorMessage", "상품번호, 상품명, 판매가, 재고 수량은 필수 입력 항목입니다.");
+                request.getSession().setAttribute("errorMessage", "상품번호, 상품명,  소비자 가격, 판매 가격, 재고 수량은 필수 입력 항목입니다.");
                 response.sendRedirect("manage_products.do");
                 return;
             }

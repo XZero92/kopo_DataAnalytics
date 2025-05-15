@@ -40,18 +40,31 @@ public class ECLoginCommand implements ECCommand {
             
             // 로그인 성공 시
             if (user != null) {
-                // 사용자 세션 생성
-                HttpSession session = request.getSession();
-                session.setAttribute("loginUser", user);
+                if (UserDTO.STATUS_ACTIVE.equals(user.getStatus())) {
+                    // 정상 로그인
+                    HttpSession session = request.getSession();
+                    session.setAttribute("loginUser", user);
+                    session.setMaxInactiveInterval(30 * 60);
 
-                session.setMaxInactiveInterval(30 * 60);
-                
-                // 홈페이지 또는 이전 페이지로 리다이렉트
-                String referer = request.getHeader("Referer");
-                if (referer != null && !referer.contains("login.do") && !referer.contains("register.do")) {
-                    response.sendRedirect(referer);
+                    String referer = request.getHeader("Referer");
+                    if (referer != null && !referer.contains("login.do") && !referer.contains("register.do")) {
+                        response.sendRedirect(referer);
+                    } else {
+                        response.sendRedirect("main.do");
+                    }
                 } else {
-                    response.sendRedirect("main.do");
+                    // 상태에 따른 메시지 설정
+                    String message = "";
+                    if (UserDTO.STATUS_INACTIVE.equals(user.getStatus())) {
+                        message = "회원가입 승인 대기중입니다. 관리자 승인 후 이용할 수 있습니다.";
+                    } else if (UserDTO.STATUS_DELETED.equals(user.getStatus())) {
+                        message = "탈퇴한 회원입니다. 로그인 할 수 없습니다.";
+                    } else if (UserDTO.STATUS_SUSPENDED.equals(user.getStatus())) {
+                        message = "일시정지된 회원입니다. 관리자에게 문의하세요.";
+                    }
+                    request.setAttribute("errorMessage", message);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/user/login.jsp");
+                    dispatcher.forward(request, response);
                 }
             } 
             // 로그인 실패 시

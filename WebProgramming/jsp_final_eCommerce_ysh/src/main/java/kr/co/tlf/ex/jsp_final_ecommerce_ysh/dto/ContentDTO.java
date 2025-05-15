@@ -5,19 +5,19 @@ import java.sql.Timestamp;
 
 public class ContentDTO {
     // TB_CONTENT
-    private String fileId; // ID_FILE
-    private String originalFileName; // NM_ORG_FILE
-    private String savedFileName; // NM_SAVE_FILE
-    private String filePath; // NM_FILE_PATH
-    private Blob savedFile; // BO_SAVE_FILE
-    private String fileExtension; // NM_FILE_EXT
-    private String fileTypeCode; // CD_FILE_TYPE
-    private Timestamp saveDate; // DA_SAVE, DEFAULT SYSDATE
-    private int hitCount; // CN_HIT, DEFAULT 0
-    private String serviceId; // ID_SERVICE
-    private String originalFileId; // ID_ORG_FILE
-    private String registerNo; // NO_REGISTER
-    private Timestamp firstDate; // DA_FIRST_DATE
+    private String fileId; //  컨텐츠 식별 ID, ID_FILE
+    private String originalFileName; // 원본 파일 명, NM_ORG_FILE
+    private String savedFileName; // 저장 파일 명, NM_SAVE_FILE
+    private String filePath; // 저장 경로 명, NM_FILE_PATH
+    private Blob savedFile; // 저장 파일, BO_SAVE_FILE
+    private String fileExtension; // 파일 확장자 명, NM_FILE_EXT
+    private String fileTypeCode; // 파일 유형 코드, CD_FILE_TYPE
+    private Timestamp saveDate; // 저장 일시, DA_SAVE, DEFAULT SYSDATE
+    private int hitCount; // 조회수, CN_HIT, DEFAULT 0
+    private String serviceId; // 서비스 ID, ID_SERVICE
+    private String originalFileId; // 원 컨텐츠 식별 ID, ID_ORG_FILE
+    private String registerNo; // 최초 등록자 ID, NO_REGISTER
+    private Timestamp firstDate; // 최초 등록 일시, gksDA_FIRST_DATE
 
     // Getters and Setters
     public String getFileId() {

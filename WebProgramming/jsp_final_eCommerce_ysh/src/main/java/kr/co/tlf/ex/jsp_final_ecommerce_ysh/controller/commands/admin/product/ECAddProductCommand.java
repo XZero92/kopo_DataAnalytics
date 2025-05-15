@@ -17,11 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024, // 1MB
-        maxFileSize = 1024 * 1024 * 10, // 10MB
-        maxRequestSize = 1024 * 1024 * 20 // 20MB
-)
 public class ECAddProductCommand implements ECCommand {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) {
@@ -48,10 +43,11 @@ public class ECAddProductCommand implements ECCommand {
             String[] categoryIds = request.getParameterValues("categoryIds");
             
             // 필수 파라미터 검증
-            if (productName == null || productName.isEmpty() || 
+            if (productName == null || productName.isEmpty() ||
+                customerQuantityStr == null || customerQuantityStr.isEmpty() ||
                 salePriceStr == null || salePriceStr.isEmpty() ||
                 stockQuantityStr == null || stockQuantityStr.isEmpty()) {
-                request.getSession().setAttribute("errorMessage", "상품명, 판매가, 재고 수량은 필수 입력 항목입니다.");
+                request.getSession().setAttribute("errorMessage", "상품명, 소비자 가격, 판매 가격, 재고 수량은 필수 입력 항목입니다.");
                 response.sendRedirect("manage_products.do");
                 return;
             }
@@ -66,18 +62,32 @@ public class ECAddProductCommand implements ECCommand {
             newProduct.setDetailExplain(detailExplain);
             
             // 파일 ID 처리 (파일 업로드 기능이 추가로 필요함)
-            /*Part filePart = request.getPart("productImage");
-            if (filePart != null && filePart.getSize() > 0) {
-                ContentDAO contentDAO = new ContentDAO();
-                String fileId = contentDAO.saveContent(filePart, loginUser.getUserId());
-                newProduct.setFileId(fileId);
-            } else {
-                newProduct.setFileId("");
-            }*/
+            try {
+                Part filePart = request.getPart("productImage");
+                if (filePart != null && filePart.getSize() > 0) {
+                    ContentDAO contentDAO = new ContentDAO();
+                    String fileId = contentDAO.saveContent(filePart, loginUser.getUserId());
+                    newProduct.setFileId(fileId);
+                } else {
+                    newProduct.setFileId("");
+                }
+            } catch (IOException | ServletException e) {
+                System.err.println("파일 업로드 중 오류 발생: " + e.getMessage());
+                e.printStackTrace();
+            }
 
-            
-            newProduct.setStartDate(startDate);
-            newProduct.setEndDate(endDate);
+
+            if (startDate != null && !startDate.isEmpty()) {
+                newProduct.setStartDate(startDate.replace("-", ""));
+            } else {
+                newProduct.setStartDate(null);
+            }
+
+            if (endDate != null && !endDate.isEmpty()) {
+                newProduct.setEndDate(endDate.replace("-", ""));
+            } else {
+                newProduct.setEndDate(null);
+            }
             
             // 숫자형 데이터 변환
             try {
@@ -100,7 +110,7 @@ public class ECAddProductCommand implements ECCommand {
             boolean success = productDAO.addProduct(newProduct);
             
             if (success) {
-                // 카테고리 연결
+                /*// 카테고리 연결
                 if (categoryIds != null && categoryIds.length > 0) {
                     for (String categoryId : categoryIds) {
                         try {
@@ -111,7 +121,7 @@ public class ECAddProductCommand implements ECCommand {
                             System.err.println("잘못된 카테고리 ID: " + categoryId);
                         }
                     }
-                }
+                }*/
                 
                 // 성공 메시지 설정
                 request.getSession().setAttribute("message", "상품이 성공적으로 추가되었습니다.");

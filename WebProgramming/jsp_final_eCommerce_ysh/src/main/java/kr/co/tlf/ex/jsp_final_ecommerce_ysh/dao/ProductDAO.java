@@ -48,7 +48,7 @@ public class ProductDAO {
                 product.setSalePrice(rs.getInt("QT_SALE_PRICE"));
                 product.setStockQuantity(rs.getInt("QT_STOCK"));
                 product.setDeliveryFee(rs.getInt("QT_DELIVERY_FEE"));
-                product.setRegisterNo(rs.getString("REGISTER_NO"));
+                product.setRegisterNo(rs.getString("NO_REGISTER"));
                 product.setFirstDate(rs.getTimestamp("DA_FIRST_DATE"));
                 
                 products.add(product);
@@ -98,7 +98,7 @@ public class ProductDAO {
                 product.setSalePrice(rs.getInt("QT_SALE_PRICE"));
                 product.setStockQuantity(rs.getInt("QT_STOCK"));
                 product.setDeliveryFee(rs.getInt("QT_DELIVERY_FEE"));
-                product.setRegisterNo(rs.getString("REGISTER_NO"));
+                product.setRegisterNo(rs.getString("NO_REGISTER"));
                 product.setFirstDate(rs.getTimestamp("DA_FIRST_DATE"));
                 
                 products.add(product);
@@ -144,7 +144,7 @@ public class ProductDAO {
                 product.setSalePrice(rs.getInt("QT_SALE_PRICE"));
                 product.setStockQuantity(rs.getInt("QT_STOCK"));
                 product.setDeliveryFee(rs.getInt("QT_DELIVERY_FEE"));
-                product.setRegisterNo(rs.getString("REGISTER_NO"));
+                product.setRegisterNo(rs.getString("NO_REGISTER"));
                 product.setFirstDate(rs.getTimestamp("DA_FIRST_DATE"));
             }
         } catch (Exception e) {
@@ -171,7 +171,7 @@ public class ProductDAO {
             conn = dataSource.getConnection();
             String query = "INSERT INTO TB_PRODUCT (NO_PRODUCT, NM_PRODUCT, NM_DETAIL_EXPLAIN, ID_FILE, " +
                     "DT_START_DATE, DT_END_DATE, QT_CUSTOMER, QT_SALE_PRICE, QT_STOCK, " +
-                    "QT_DELIVERY_FEE, REGISTER_NO, DA_FIRST_DATE) " +
+                    "QT_DELIVERY_FEE, NO_REGISTER, DA_FIRST_DATE) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE)";
             
             pstmt = conn.prepareStatement(query);

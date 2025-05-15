@@ -62,7 +62,8 @@ public class ECAddCategoryCommand implements ECCommand {
             
             // 같은 부모 카테고리 내에서의 순서 (마지막에 추가)
             // 실제로는 더 복잡한 로직이 필요할 수 있음
-            newCategory.setOrder(1);
+            int newOrder = categoryDAO.getNextCategoryOrder(parentCategoryId);
+            newCategory.setOrder(newOrder);
             
             // 전체 카테고리 이름 생성 (부모 카테고리 이름 + 현재 카테고리 이름)
             String fullCategoryName = categoryDAO.generateFullCategoryName(parentCategoryId, categoryName);
@@ -71,6 +72,7 @@ public class ECAddCategoryCommand implements ECCommand {
             // 사용 여부 및 삭제 여부 설정
             newCategory.setUseYn("Y");
             newCategory.setDeleteYn("N");
+            newCategory.setRegisterNo(loginUser.getUserId());
             
             // 등록자 정보 설정
             newCategory.setRegisterNo(loginUser.getUserId());

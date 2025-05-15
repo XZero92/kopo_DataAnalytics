@@ -232,6 +232,29 @@ public class CategoryDAO {
         }
     }
 
+    // 카테고리 순서 수정
+    public boolean updateCategoryOrder(int categoryNo, int order) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = dataSource.getConnection();
+            String query = "UPDATE TB_CATEGORY SET CN_ORDER = ? WHERE NB_CATEGORY = ?";
+            pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, order);
+            pstmt.setInt(2, categoryNo);
+            return pstmt.executeUpdate() == 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
     
     // 카테고리 논리적 삭제 (YN_DELETE = 'Y'로 설정)
     public boolean deleteCategory(int categoryNo) {
@@ -291,6 +314,40 @@ public class CategoryDAO {
         }
         
         return nextNo;
+    }
+
+    public int getNextCategoryOrder(int parentCategoryNo) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int nextOrder = 1;
+        try {
+            conn = dataSource.getConnection();
+            String query;
+            if (parentCategoryNo == 0) {
+                query = "SELECT MAX(CN_ORDER) FROM TB_CATEGORY WHERE NB_PARENT_CATEGORY IS NULL";
+                pstmt = conn.prepareStatement(query);
+            } else {
+                query = "SELECT MAX(CN_ORDER) FROM TB_CATEGORY WHERE NB_PARENT_CATEGORY = ?";
+                pstmt = conn.prepareStatement(query);
+                pstmt.setInt(1, parentCategoryNo);
+            }
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                nextOrder = rs.getInt(1) + 1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return nextOrder;
     }
     
     // 카테고리의 전체 경로 이름 생성 (상위 카테고리 이름을 포함)

@@ -124,7 +124,7 @@
                                             </c:choose>
                                         </td>
                                         <td>${product.productName}</td>
-                                        <td><fmt:formatNumber value="${product.salePrice}" type="currency" currencySymbol="₩" /></td>
+                                        <td><fmt:formatNumber value="${product.salePrice}" type="currency" currencySymbol="₩" maxFractionDigits="0" /></td>
                                         <td>${product.stockQuantity}개</td>
                                         <td>
                                             <c:if test="${not empty product.startDate}">
@@ -139,9 +139,20 @@
                                                 <button class="btn btn-sm btn-outline-primary" onclick="viewProduct('${product.productNo}')">
                                                     보기
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="editProduct('${product.productNo}')">
+                                                <!-- edit 버튼에 data 속성으로 상품 정보를 전달 -->
+                                                <button type="button" class="btn btn-sm btn-primary"
+                                                        onclick="editProduct(this)"
+                                                        data-product-no="${product.productNo}"
+                                                        data-product-name="${product.productName}"
+                                                        data-sale-price="${product.salePrice}"
+                                                        data-stock-quantity="${product.stockQuantity}"
+                                                        data-customer-quantity="${product.customerQuantity}"
+                                                        data-delivery-fee="${product.deliveryFee}"
+                                                        data-start-date="${product.startDate}"
+                                                        data-end-date="${product.endDate}"
+                                                        data-detail-explain="${product.detailExplain}"
+                                                        data-file-id="${product.fileId}">
                                                     수정
-                                                </button>
                                                 <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct('${product.productNo}', '${product.productName}')">
                                                     삭제
                                                 </button>
@@ -175,7 +186,14 @@
                                 <input type="text" class="form-control" id="productName" name="productName" required>
                             </div>
                             <div class="mb-3">
-                                <label for="salePrice" class="form-label">판매가</label>
+                                <label for="customerQuantity" class="form-label">소비자 가격</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">₩</span>
+                                    <input type="number" class="form-control" id="customerQuantity" name="customerQuantity" min="0" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="salePrice" class="form-label">판매 가격</label>
                                 <div class="input-group">
                                     <span class="input-group-text">₩</span>
                                     <input type="number" class="form-control" id="salePrice" name="salePrice" min="0" required>
@@ -184,10 +202,6 @@
                             <div class="mb-3">
                                 <label for="stockQuantity" class="form-label">재고 수량</label>
                                 <input type="number" class="form-control" id="stockQuantity" name="stockQuantity" min="0" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="customerQuantity" class="form-label">1인당 구매 제한 수량</label>
-                                <input type="number" class="form-control" id="customerQuantity" name="customerQuantity" min="1" value="1">
                             </div>
                             <div class="mb-3">
                                 <label for="deliveryFee" class="form-label">배송비</label>
@@ -257,6 +271,13 @@
                                 <input type="text" class="form-control" id="editProductName" name="productName" required>
                             </div>
                             <div class="mb-3">
+                                <label for="customerQuantity" class="form-label">소비자 가격</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">₩</span>
+                                    <input type="number" class="form-control" id="customerQuantity" name="customerQuantity" min="0" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
                                 <label for="editSalePrice" class="form-label">판매가</label>
                                 <div class="input-group">
                                     <span class="input-group-text">₩</span>
@@ -266,10 +287,6 @@
                             <div class="mb-3">
                                 <label for="editStockQuantity" class="form-label">재고 수량</label>
                                 <input type="number" class="form-control" id="editStockQuantity" name="stockQuantity" min="0" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="editCustomerQuantity" class="form-label">1인당 구매 제한 수량</label>
-                                <input type="number" class="form-control" id="editCustomerQuantity" name="customerQuantity" min="1" value="1">
                             </div>
                             <div class="mb-3">
                                 <label for="editDeliveryFee" class="form-label">배송비</label>
@@ -356,54 +373,29 @@
         // 상품 상세 페이지로 이동
         window.location.href = "view_product.do?productNo=" + productNo;
     }
-    
-    // 상품 수정 모달 열기
-    function editProduct(productNo) {
-        // AJAX로 상품 정보 가져오기
-        fetch('get_product.do?productNo=' + productNo)
-            .then(response => response.json())
-            .then(product => {
-                // 폼에 상품 정보 설정
-                document.getElementById('editProductNo').value = product.productNo;
-                document.getElementById('editProductName').value = product.productName;
-                document.getElementById('editSalePrice').value = product.salePrice;
-                document.getElementById('editStockQuantity').value = product.stockQuantity;
-                document.getElementById('editCustomerQuantity').value = product.customerQuantity;
-                document.getElementById('editDeliveryFee').value = product.deliveryFee;
-                document.getElementById('editStartDate').value = product.startDate || '';
-                document.getElementById('editEndDate').value = product.endDate || '';
-                document.getElementById('editDetailExplain').value = product.detailExplain || '';
-                
-                // 이미지 미리보기 설정
-                const previewDiv = document.getElementById('currentImagePreview');
-                if (product.fileId) {
-                    previewDiv.innerHTML = `<img src="getImage.do?fileId=${product.fileId}" alt="${product.productName}" class="img-thumbnail" style="max-height: 100px;">`;
-                } else {
-                    previewDiv.innerHTML = '<div class="text-muted">이미지 없음</div>';
-                }
-                
-                // 카테고리 체크박스 초기화
-                document.querySelectorAll('.edit-category-checkbox').forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-                
-                // 선택된 카테고리 설정
-                if (product.categories && product.categories.length > 0) {
-                    product.categories.forEach(categoryId => {
-                        const checkbox = document.getElementById('editCategory' + categoryId);
-                        if (checkbox) {
-                            checkbox.checked = true;
-                        }
-                    });
-                }
-                
-                // 모달 열기
-                new bootstrap.Modal(document.getElementById('editProductModal')).show();
-            })
-            .catch(error => {
-                console.error('상품 정보를 불러오는 중 오류 발생:', error);
-                alert('상품 정보를 불러오는 중 오류가 발생했습니다.');
-            });
+
+    // 상품 수정 모달 열기: 클릭한 버튼의 data 속성을 읽어 모달 폼에 채움.
+    function editProduct(button) {
+        document.getElementById('editProductNo').value = button.getAttribute('data-product-no');
+        document.getElementById('editProductName').value = button.getAttribute('data-product-name');
+        document.getElementById('editSalePrice').value = button.getAttribute('data-sale-price');
+        document.getElementById('editStockQuantity').value = button.getAttribute('data-stock-quantity');
+        document.getElementById('editCustomerQuantity').value = button.getAttribute('data-customer-quantity');
+        document.getElementById('editDeliveryFee').value = button.getAttribute('data-delivery-fee');
+        document.getElementById('editStartDate').value = button.getAttribute('data-start-date') || '';
+        document.getElementById('editEndDate').value = button.getAttribute('data-end-date') || '';
+        document.getElementById('editDetailExplain').value = button.getAttribute('data-detail-explain') || '';
+
+        // 이미지 미리보기 처리
+        var fileId = button.getAttribute('data-file-id');
+        var previewDiv = document.getElementById('currentImagePreview');
+        if (fileId) {
+            previewDiv.innerHTML = '<img src="getImage.do?fileId=' + fileId + '" alt="' + button.getAttribute('data-product-name') + '" class="img-thumbnail" style="max-height: 100px;">';
+        } else {
+            previewDiv.innerHTML = '';
+        }
+
+        new bootstrap.Modal(document.getElementById('editProductModal')).show();
     }
     
     // 상품 삭제 모달 열기

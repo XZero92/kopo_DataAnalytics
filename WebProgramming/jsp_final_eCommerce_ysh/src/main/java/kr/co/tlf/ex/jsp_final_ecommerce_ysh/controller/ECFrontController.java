@@ -1,11 +1,13 @@
 package kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller.commands.*;
+import kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller.commands.product.*;
 import kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller.commands.user.*;
 import kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller.commands.admin.*;
 import kr.co.tlf.ex.jsp_final_ecommerce_ysh.controller.commands.admin.user.*;
@@ -20,6 +22,12 @@ import java.util.Map;
  * 모든 요청을 중앙에서 처리하는 프론트 컨트롤러 서블릿
  * URL 패턴 *.do에 매핑되어 있어 .do로 끝나는 모든 요청을 처리
  */
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024, // 1MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 20 // 20MB
+)
+
 @WebServlet("*.do")
 public class ECFrontController extends HttpServlet {
     
@@ -70,6 +78,12 @@ public class ECFrontController extends HttpServlet {
         commandMap.put("/update_product.do", new ECUpdateProductCommand());
         commandMap.put("/delete_product.do", new ECDeleteProductCommand());
 
+        // 쇼핑몰
+        commandMap.put("/product_list.do", new ECProductListCommand());
+        commandMap.put("/product_detail.do", new ECProductDetailCommand());
+
+        // 범용 커맨드
+        commandMap.put("/getImage.do", new ECGetImageCommand());
     }
     
     /**

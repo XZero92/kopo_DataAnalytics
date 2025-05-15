@@ -5,7 +5,7 @@
     <div class="container d-flex justify-content-between align-items-center">
         <!-- 좌측: 로고 영역 -->
         <div class="logo">
-            <a href="index.do" class="text-decoration-none">
+            <a href="main.do" class="text-decoration-none">
                 <!-- 이미지 로고 (주석 처리) -->
                 <%-- <img src="assets/images/logo.png" alt="쇼핑몰 로고" height="40"> --%>
                 
