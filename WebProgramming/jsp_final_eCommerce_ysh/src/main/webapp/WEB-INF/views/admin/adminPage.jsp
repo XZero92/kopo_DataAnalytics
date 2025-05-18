@@ -50,7 +50,7 @@
                     <a class="nav-link" href="manage_users.do">전체 사용자 관리</a>
                     <a class="nav-link" href="manage_categories.do">상품 카테고리 관리</a>
                     <a class="nav-link" href="manage_products.do">상품 관리</a>
-                    <a class="nav-link disabled" href="#">전시 상품 관리</a>
+                    <a class="nav-link" href="manage_category_mapping.do">전시 상품 관리</a>
                     <a class="nav-link disabled" href="#">주문 관리</a>
                 </div>
             </div>

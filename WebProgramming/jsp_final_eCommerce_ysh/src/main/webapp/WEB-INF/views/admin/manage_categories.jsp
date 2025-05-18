@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -141,8 +142,8 @@
                                                 onclick="editCategory(${category.categoryNo}, '${category.categoryName}', '${category.explain}', '${category.useYn}')">
                                                 수정
                                             </button>
-                                            <button class="btn btn-sm btn-outline-danger" 
-                                                onclick="deleteCategory(${category.categoryNo}, '${category.categoryName}')">
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                    onclick="deleteCategory(${category.categoryNo}, '${category.categoryName}')">
                                                 삭제
                                             </button>
                                         </div>
@@ -396,7 +397,29 @@
     </div>
 </div>
 
+<!-- 삭제 확인 모달 -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">삭제 확인</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                카테고리 "<span id="confirmCategoryName"></span>"를 삭제하시겠습니까?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDeletion()">삭제</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    let currentCategoryId = null;
+    let currentCategoryName = '';
+
     function editCategory(categoryId, categoryName, explanation, useYn) {
         document.getElementById('editCategoryId').value = categoryId;
         document.getElementById('editCategoryName').value = categoryName;
@@ -407,8 +430,16 @@
     }
 
     function deleteCategory(categoryId, categoryName) {
-        if (confirm(`카테고리 "${categoryName}"를 삭제하시겠습니까?`)) {
-            location.href = `delete_category.do?categoryId=${categoryId}`;
+        currentCategoryId = categoryId;
+        currentCategoryName = categoryName;
+        document.getElementById('confirmCategoryName').textContent = categoryName;
+        const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        modal.show();
+    }
+
+    function confirmDeletion() {
+        if (currentCategoryId) {
+            location.href = `delete_category.do?categoryId=${currentCategoryId}`;
         }
     }
 
@@ -607,4 +638,3 @@
 </script>
 </body>
 </html>
-

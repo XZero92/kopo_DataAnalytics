@@ -229,9 +229,13 @@
                                 <div class="border p-3" style="max-height: 150px; overflow-y: auto;">
                                     <c:forEach var="category" items="${categories}">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="categoryIds" value="${category.categoryNo}" id="category${category.categoryNo}">
+                                            <input class="form-check-input" type="checkbox" name="categoryIds"
+                                                   value="${category.categoryNo}" id="category${category.categoryNo}">
                                             <label class="form-check-label" for="category${category.categoryNo}">
-                                                ${category.fullCategoryName}
+                                                <c:forEach begin="1" end="${category.level - 1}">
+                                                    &nbsp;&nbsp;&nbsp;
+                                                </c:forEach>
+                                                    ${category.fullCategoryName}
                                             </label>
                                         </div>
                                     </c:forEach>
