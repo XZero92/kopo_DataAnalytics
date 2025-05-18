@@ -4,9 +4,9 @@
               auth="Container"
               type="javax.sql.DataSource"
               driverClassName="oracle.jdbc.driver.OracleDriver"
-              url="jdbc:oracle:thin:@//192.168.217.247:1521/dinkdb"
-              username="scott"
-              password="tiger"
+              url="jdbc:oracle:thin:@dinkdb_medium?TNS_ADMIN=C://Oracle/Wallet_DinkDB"
+              username="DA2509"
+              password="Data2509"
               maxActive="10"
               maxIdle="5"
               maxWait="-1"/>

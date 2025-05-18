@@ -385,4 +385,51 @@ public class ProductDAO {
         
         return categoryIds;
     }
+
+    // 상품명 기반 검색
+    public List<ProductDTO> searchProducts(String searchTerm) {
+        List<ProductDTO> products = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dataSource.getConnection();
+            String query = "SELECT * FROM TB_PRODUCT WHERE NM_PRODUCT LIKE ? ORDER BY NO_PRODUCT";
+            pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, "%" + searchTerm + "%");
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                ProductDTO product = new ProductDTO();
+                product.setProductNo(rs.getString("NO_PRODUCT"));
+                product.setProductName(rs.getString("NM_PRODUCT"));
+                product.setDetailExplain(rs.getString("NM_DETAIL_EXPLAIN"));
+                product.setFileId(rs.getString("ID_FILE"));
+                product.setStartDate(rs.getString("DT_START_DATE"));
+                product.setEndDate(rs.getString("DT_END_DATE"));
+                product.setCustomerQuantity(rs.getInt("QT_CUSTOMER"));
+                product.setSalePrice(rs.getInt("QT_SALE_PRICE"));
+                product.setStockQuantity(rs.getInt("QT_STOCK"));
+                product.setDeliveryFee(rs.getInt("QT_DELIVERY_FEE"));
+                product.setRegisterNo(rs.getString("NO_REGISTER"));
+                product.setFirstDate(rs.getTimestamp("DA_FIRST_DATE"));
+
+                products.add(product);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return products;
+    }
 }
+

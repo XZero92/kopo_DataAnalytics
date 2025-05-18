@@ -1,6 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%
+  boolean isIncluded = (request.getAttribute("javax.servlet.include.request_uri") != null);
+%>
 <html>
 <head>
   <title>상품 상세 페이지</title>
@@ -8,8 +11,13 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css">
 </head>
 <body>
+<%
+  if (!isIncluded) {
+%>
 <jsp:include page="../common/header.jsp" />
-
+<%
+  }
+%>
 <div class="container mt-4">
   <div class="row">
     <div class="col-md-6">

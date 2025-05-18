@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Flatly 테마 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <style>
         .admin-menu {
             border-right: 1px solid #eee;
@@ -43,7 +45,25 @@
         .level-2 { margin-left: 20px; }
         .level-3 { margin-left: 40px; }
         .level-4 { margin-left: 60px; }
+        .sortable-ghost {
+            background-color: #f8f9fa;
+            opacity: 0.5;
+        }
+        .sortable-drag {
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .sort-handle {
+            cursor: move;
+            margin-right: 10px;
+            color: #dee2e6;
+        }
+        .sort-handle:hover {
+            color: #adb5bd;
+        }
     </style>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 <jsp:include page="../common/header.jsp" />
@@ -269,140 +289,322 @@
 <div class="modal fade" id="updateOrderModal" tabindex="-1" aria-labelledby="updateOrderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="update_category_order.do" method="post" id="orderForm">
+            <form id="orderForm" action="update_category_order.do" method="post">
                 <div class="modal-header">
                     <h5 class="modal-title" id="updateOrderModalLabel">카테고리 순서 변경</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table table-bordered" id="orderTable">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> 화살표 버튼을 사용하여 같은 레벨 내에서만 순서를 변경할 수 있습니다.
+                    </div>
+                    <table id="sortableCategories" class="table table-bordered">
                         <thead>
-                        <tr>
-                            <th>카테고리 번호</th>
-                            <th>카테고리 명</th>
-                            <th>순서 변경</th>
-                        </tr>
+                            <tr>
+                                <th style="width: 10%">순서</th>
+                                <th style="width: 40%">카테고리 이름</th>
+                                <th style="width: 30%">설명</th>
+                                <th style="width: 10%">활성화</th>
+                                <th style="width: 10%">작업</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <c:forEach var="cat" items="${categories}">
-                            <c:if test="${cat.level == 1}">
-                                <tr data-level="${cat.level}">
-                                    <td>
-                                            ${cat.categoryNo}
-                                        <input type="hidden" name="categoryId" value="${cat.categoryNo}">
-                                    </td>
-                                    <td>${cat.fullCategoryName}</td>
-                                    <td>
-                                        <input type="text" name="order" value="${cat.order}" size="3" readonly>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="moveUp(this)">▲</button>
-                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="moveDown(this)">▼</button>
-                                    </td>
-                                </tr>
-                                <!-- 하위 카테고리 반복 (동일 로직, 레벨에 따라 indent 처리) -->
-                                <c:forEach var="sub" items="${categories}">
-                                    <c:if test="${sub.parentCategoryNo == cat.categoryNo}">
-                                        <tr data-level="${sub.level}">
-                                            <td>
-                                                    ${sub.categoryNo}
-                                                <input type="hidden" name="categoryId" value="${sub.categoryNo}">
-                                            </td>
-                                            <td style="padding-left: 20px;">${sub.fullCategoryName}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="moveUp(this)">▲</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="moveDown(this)">▼</button>
-                                            </td>
-                                        </tr>
-                                    </c:if>
-                                </c:forEach>
-                            </c:if>
-                        </c:forEach>
+                            <!-- 대분류 -->
+                            <c:forEach var="cat1" items="${categories}">
+                                <c:if test="${cat1.level == 1}">
+                                    <tr data-level="${cat1.level}" data-parent="0">
+                                        <td>
+                                            <input type="hidden" name="categoryId" value="${cat1.categoryNo}">
+                                            <input type="hidden" name="order" value="${cat1.order}">
+                                            ${cat1.order}
+                                        </td>
+                                        <td>${cat1.categoryName}</td>
+                                        <td>${cat1.explain}</td>
+                                        <td>${cat1.useYn == 'Y' ? '활성화' : '비활성화'}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button type="button" class="btn btn-outline-primary" onclick="moveUp(this.closest('tr'))">
+                                                    <i class="bi bi-arrow-up"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-primary" onclick="moveDown(this.closest('tr'))">
+                                                    <i class="bi bi-arrow-down"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- 중분류 -->
+                                    <c:forEach var="cat2" items="${categories}">
+                                        <c:if test="${cat2.parentCategoryNo == cat1.categoryNo}">
+                                            <tr data-level="${cat2.level}" data-parent="${cat1.categoryNo}">
+                                                <td>
+                                                    <input type="hidden" name="categoryId" value="${cat2.categoryNo}">
+                                                    <input type="hidden" name="order" value="${cat2.order}">
+                                                    ${cat2.order}
+                                                </td>
+                                                <td style="padding-left: 20px">${cat2.categoryName}</td>
+                                                <td>${cat2.explain}</td>
+                                                <td>${cat2.useYn == 'Y' ? '활성화' : '비활성화'}</td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button type="button" class="btn btn-outline-primary" onclick="moveUp(this.closest('tr'))">
+                                                            <i class="bi bi-arrow-up"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-primary" onclick="moveDown(this.closest('tr'))">
+                                                            <i class="bi bi-arrow-down"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <!-- 소분류 -->
+                                            <c:forEach var="cat3" items="${categories}">
+                                                <c:if test="${cat3.parentCategoryNo == cat2.categoryNo}">
+                                                    <tr data-level="${cat3.level}" data-parent="${cat2.categoryNo}">
+                                                        <td>
+                                                            <input type="hidden" name="categoryId" value="${cat3.categoryNo}">
+                                                            <input type="hidden" name="order" value="${cat3.order}">
+                                                            ${cat3.order}
+                                                        </td>
+                                                        <td style="padding-left: 40px">${cat3.categoryName}</td>
+                                                        <td>${cat3.explain}</td>
+                                                        <td>${cat3.useYn == 'Y' ? '활성화' : '비활성화'}</td>
+                                                        <td>
+                                                            <div class="btn-group btn-group-sm">
+                                                                <button type="button" class="btn btn-outline-primary" onclick="moveUp(this.closest('tr'))">
+                                                                    <i class="bi bi-arrow-up"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-outline-primary" onclick="moveDown(this.closest('tr'))">
+                                                                    <i class="bi bi-arrow-down"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </c:if>
+                                            </c:forEach>
+                                        </c:if>
+                                    </c:forEach>
+                                </c:if>
+                            </c:forEach>
                         </tbody>
                     </table>
-                    <small class="text-muted">동일 레벨 내에서만 순서가 변경됩니다.</small>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="submit" class="btn btn-primary">순서 변경 확인</button>
+                    <button type="submit" class="btn btn-primary">순서 저장</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- 카테고리 삭제 확인 모달 -->
-<div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteCategoryModalLabel">카테고리 삭제 확인</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>카테고리 "<span id="deleteCategoryName"></span>"를 삭제하시겠습니까?</p>
-                <p class="text-danger">주의: 이 작업은 되돌릴 수 없으며, 하위 카테고리에도 영향을 줄 수 있습니다.</p>
-            </div>
-            <div class="modal-footer">
-                <form action="delete_category.do" method="post">
-                    <input type="hidden" id="deleteCategoryId" name="categoryId">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="submit" class="btn btn-danger">카테고리 삭제</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Bootstrap JS 및 의존성 -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-
 <script>
     function editCategory(categoryId, categoryName, explanation, useYn) {
         document.getElementById('editCategoryId').value = categoryId;
         document.getElementById('editCategoryName').value = categoryName;
-        document.getElementById('editExplanation').value = explanation || '';
+        document.getElementById('editExplanation').value = explanation;
         document.getElementById('editUseYn').checked = useYn === 'Y';
-
-        // 모달 열기
-        new bootstrap.Modal(document.getElementById('editCategoryModal')).show();
+        var editModal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+        editModal.show();
     }
 
     function deleteCategory(categoryId, categoryName) {
-        document.getElementById('deleteCategoryId').value = categoryId;
-        document.getElementById('deleteCategoryName').textContent = categoryName;
-
-        // 모달 열기
-        new bootstrap.Modal(document.getElementById('deleteCategoryModal')).show();
+        if (confirm(`카테고리 "${categoryName}"를 삭제하시겠습니까?`)) {
+            location.href = `delete_category.do?categoryId=${categoryId}`;
+        }
     }
 
-    function moveUp(btn) {
-        var row = btn.closest("tr");
+    function moveUp(row) {
+        var prev = findPreviousSameLevel(row);
+        if (prev) {
+            swapRows(row, prev);
+        }
+    }
+
+    function moveDown(row) {
+        var next = findNextSameLevel(row);
+        if (next) {
+            swapRows(row, next);
+        }
+    }
+
+    function findPreviousSameLevel(row) {
+        var level = row.getAttribute('data-level');
+        var parent = row.getAttribute('data-parent');
         var prev = row.previousElementSibling;
-        if (prev && prev.getAttribute("data-level") === row.getAttribute("data-level")) {
-            swapRowValues(row, prev);
-            row.parentNode.insertBefore(row, prev);
+
+        while (prev) {
+            if (prev.getAttribute('data-level') === level &&
+                prev.getAttribute('data-parent') === parent) {
+                return prev;
+            }
+            prev = prev.previousElementSibling;
         }
+        return null;
     }
 
-    function moveDown(btn) {
-        var row = btn.closest("tr");
+    function findNextSameLevel(row) {
+        var level = row.getAttribute('data-level');
+        var parent = row.getAttribute('data-parent');
         var next = row.nextElementSibling;
-        if (next && next.getAttribute("data-level") === row.getAttribute("data-level")) {
-            swapRowValues(row, next);
-            row.parentNode.insertBefore(next, row);
+
+        while (next) {
+            if (next.getAttribute('data-level') === level &&
+                next.getAttribute('data-parent') === parent) {
+                return next;
+            }
+            next = next.nextElementSibling;
+        }
+        return null;
+    }
+
+    // 부모 카테고리를 찾는 함수
+    function findParentCategory(row) {
+        const parentId = row.getAttribute('data-parent');
+        if (parentId === '0') return null;
+
+        const rows = Array.from(row.parentNode.children);
+        return rows.find(r => r.querySelector('input[name="categoryId"]')?.value === parentId);
+    }
+
+    // 계층형 순서 번호를 생성하는 함수
+    function formatOrderNumber(row) {
+        const level = parseInt(row.getAttribute('data-level'));
+        const orderNumber = row.querySelector('input[name="order"]').value;
+
+        if (level === 1) {
+            return orderNumber;
+        } else {
+            let parent = findParentCategory(row);
+            let prefix = [];
+            while (parent) {
+                prefix.unshift(parent.querySelector('input[name="order"]').value);
+                parent = findParentCategory(parent);
+            }
+            return prefix.join('.') + '.' + orderNumber;
         }
     }
 
-    function swapRowValues(row1, row2) {
-        var order1 = row1.querySelector("input[name='order']");
-        var order2 = row2.querySelector("input[name='order']");
-        // 스왑 처리를 위해 두 값을 임시로 교환
-        var temp = order1.value;
-        order1.value = order2.value;
-        order2.value = temp;
+    // 모든 행의 순서 번호를 업데이트하는 함수
+    function updateAllOrderNumbers() {
+        const tbody = document.querySelector('#sortableCategories tbody');
+        const rows = Array.from(tbody.children);
+
+        rows.forEach(row => {
+            const orderCell = row.cells[0];
+            const formattedNumber = formatOrderNumber(row);
+            // hidden input은 그대로 두고 표시되는 텍스트만 변경
+            orderCell.lastChild.textContent = formattedNumber;
+        });
     }
+
+    function swapRows(row1, row2) {
+        // 이동할 행들의 범위와 모든 하위 항목 찾기
+        var parent = row1.parentNode;
+        var rows = Array.from(parent.children);
+
+        // 각 행과 그 하위 항목들을 포함하는 배열 생성
+        var group1 = getRowGroupWithChildren(row1, rows);
+        var group2 = getRowGroupWithChildren(row2, rows);
+
+        // 순서값 교환 (부모 행만)
+        var order1 = row1.querySelector('input[name="order"]').value;
+        var order2 = row2.querySelector('input[name="order"]').value;
+        row1.querySelector('input[name="order"]').value = order2;
+        row2.querySelector('input[name="order"]').value = order1;
+
+        // 표시되는 순서값 교환 (부모 행만)
+        var text1 = row1.cells[0].lastChild.textContent.trim();
+        var text2 = row2.cells[0].lastChild.textContent.trim();
+        row1.cells[0].lastChild.textContent = text2;
+        row2.cells[0].lastChild.textContent = text1;
+
+        // row1이 row2보다 앞에 있는 경우
+        if (rows.indexOf(row1) < rows.indexOf(row2)) {
+            // group2의 마지막 요소 다음에 group1의 모든 요소를 삽입
+            var insertPoint = group2[group2.length - 1].nextElementSibling;
+            group1.forEach(row => parent.insertBefore(row, insertPoint));
+
+            // group1의 원래 위치에 group2의 모든 요소를 삽입
+            insertPoint = group1[0];
+            group2.forEach(row => parent.insertBefore(row, insertPoint));
+        } else {
+            // group1의 마지막 요소 다음에 group2의 모든 요소를 삽입
+            var insertPoint = group1[group1.length - 1].nextElementSibling;
+            group2.forEach(row => parent.insertBefore(row, insertPoint));
+
+            // group2의 원래 위치에 group1의 모든 요소를 삽입
+            insertPoint = group2[0];
+            group1.forEach(row => parent.insertBefore(row, insertPoint));
+        }
+
+        // 모든 행의 순서 번호 업데이트
+        updateAllOrderNumbers();
+    }
+
+    // 특정 행과 그 모든 하위 항목을 포함하는 배열을 반환하는 함수
+    function getRowGroupWithChildren(row, allRows) {
+        var result = [row];
+        var level = parseInt(row.getAttribute('data-level'));
+        var startIndex = allRows.indexOf(row) + 1;
+
+        // 현재 행 이후의 모든 행을 검사
+        for (var i = startIndex; i < allRows.length; i++) {
+            var currentRow = allRows[i];
+            var currentLevel = parseInt(currentRow.getAttribute('data-level'));
+
+            // 현재 레벨보다 높은 레벨(하위 항목)인 경우에만 추가
+            if (currentLevel > level) {
+                result.push(currentRow);
+            } else {
+                // 같거나 낮은 레벨을 만나면 중단
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // 모든 input 요소를 배열로 변환하여 처리
+        var rows = document.querySelectorAll('#sortableCategories tr');
+        var formData = new FormData();
+
+        rows.forEach(function(row, index) {
+            // 기존 데이터
+            formData.append('categoryIds[]', row.querySelector("input[name='categoryId']").value);
+            formData.append('orders[]', row.querySelector("input[name='order']")?.value || (index + 1) * 10);
+
+            // 계층 구조 데이터 추가
+            formData.append('levels[]', row.getAttribute('data-level'));
+            formData.append('parents[]', row.getAttribute('data-parent'));
+        });
+
+        // AJAX 요청
+        fetch('update_category_order.do', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('순서 변경 중 오류가 발생했습니다.');
+            }
+            return response;
+        })
+        .then(() => {
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message);
+        });
+    });
+
+    // 페이지 로드 시 초기 순서 번호 포맷팅
+    document.addEventListener('DOMContentLoaded', function() {
+        updateAllOrderNumbers();
+    });
 </script>
 </body>
 </html>
+

@@ -19,6 +19,7 @@
 </head>
 <body>
 <jsp:include page="./common/header.jsp" />
+<jsp:include page="./product/product_list.jsp" />
 
 
 <!-- Bootstrap JS 및 의존성 -->

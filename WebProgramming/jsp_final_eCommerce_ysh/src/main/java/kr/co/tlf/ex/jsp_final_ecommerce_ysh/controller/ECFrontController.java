@@ -72,11 +72,19 @@ public class ECFrontController extends HttpServlet {
         commandMap.put("/add_category.do", new ECAddCategoryCommand());
         commandMap.put("/update_category.do", new ECUpdateCategoryCommand());
         commandMap.put("/delete_category.do", new ECDeleteCategoryCommand());
+        commandMap.put("/update_category_order.do", new ECUpdateCategoryOrderCommand());
         // 상품 관리
         commandMap.put("/manage_products.do", new ECManageProductsCommand());
         commandMap.put("/add_product.do", new ECAddProductCommand());
         commandMap.put("/update_product.do", new ECUpdateProductCommand());
         commandMap.put("/delete_product.do", new ECDeleteProductCommand());
+
+        // 카테고리-상품 매핑 관리
+        commandMap.put("/manage_category_mapping.do", new ECManageCategoryMappingCommand());
+        commandMap.put("/get_category_products.do", new ECGetCategoryProductsCommand());
+        commandMap.put("/remove_category_product.do", new ECRemoveCategoryProductCommand());
+        commandMap.put("/search_products.do", new ECSearchProductsCommand());
+        commandMap.put("/add_category_products.do", new ECAddCategoryProductsCommand());
 
         // 쇼핑몰
         commandMap.put("/product_list.do", new ECProductListCommand());
@@ -138,3 +146,4 @@ public class ECFrontController extends HttpServlet {
         }
     }
 }
+

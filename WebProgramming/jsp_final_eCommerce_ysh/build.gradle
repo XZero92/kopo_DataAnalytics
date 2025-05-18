@@ -33,8 +33,12 @@ dependencies {
     implementation("jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.2")
     implementation ('org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1')
     implementation("org.mindrot:jbcrypt:0.4")
+
+    // JSON 처리를 위한 Gson
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 test {
     useJUnitPlatform()
 }
+
